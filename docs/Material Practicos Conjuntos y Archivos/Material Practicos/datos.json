@@ -1,0 +1,46 @@
+{
+    "personas": [
+        {
+            "nombre": "Juan Perez",
+            "edad": 30,
+            "amigos": [
+                "Carlos",
+                "Maria",
+                "Ana"
+            ],
+            "direcciones": {
+                "casa": {
+                    "calle": "Calle Falsa 123",
+                    "ciudad": "Buenos Aires",
+                    "pais": "Argentina"
+                },
+                "trabajo": {
+                    "calle": "Avenida Siempre Viva 742",
+                    "ciudad": "Buenos Aires",
+                    "pais": "Argentina"
+                }
+            }
+        },
+        {
+            "nombre": "Laura Gomez",
+            "edad": 25,
+            "amigos": [
+                "Pedro",
+                "Luis",
+                "Sofia"
+            ],
+            "direcciones": {
+                "casa": {
+                    "calle": "Calle Verdadera 456",
+                    "ciudad": "Rosario",
+                    "pais": "Argentina"
+                },
+                "trabajo": {
+                    "calle": "Avenida Real 999",
+                    "ciudad": "Rosario",
+                    "pais": "Argentina"
+                }
+            }
+        }
+    ]
+}
