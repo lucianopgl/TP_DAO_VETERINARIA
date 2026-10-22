@@ -1,0 +1,716 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2741.6399999999994 1759.6" width="2741.6399999999994" height="1759.6" style="--bg:#1F1F1F;--fg:#CCCCCC;--line:#CCCCCC;--accent:#0078D4;--muted:#CCCCCCCC;--surface:#181818;--border:#CCCCCC;background:var(--bg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+</defs>
+<polyline class="er-relationship" data-entity1="CATALOGO_ESPECIES" data-entity2="MASCOTAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="clasifica" points="213.70399999999995,424.2666666666665 419.582,424.2666666666664 419.582,544.2666666666665 509.986,544.2666666666667" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CATALOGO_ESPECIES" data-entity2="CATALOGO_VACUNAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="aplica_a" points="213.70399999999995,405.59999999999985 223.70399999999995,405.5999999999999 223.70399999999995,102.29999999999995 499.582,102.29999999999995" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CATALOGO_TIPOS_MUESTRA" data-entity2="MUESTRAS_BIOLOGICAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="clasifica" points="1643.0359999999998,1329.6 1937.7579999999996,1329.6" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CATALOGO_TIPOS_ESTUDIO" data-entity2="ORDENES_DERIVACION" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="solicita" points="1147.946,1120.9333333333332 1417.2279999999998,1120.9333333333332" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CATALOGO_VACUNAS" data-entity2="VACUNAS_APLICADAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="instancia" points="670.3219999999999,102.29999999999995 1334.1239999999998,102.29999999999995 1334.1239999999998,182.6333333333332 1404.1239999999998,182.6333333333332" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="LABORATORIOS" data-entity2="PROFESIONALES_LABORATORIO" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="emplea" points="1147.946,226.26666666666657 1157.946,226.26666666666665 1157.946,68 1404.1239999999998,68" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CLINICAS" data-entity2="CONSULTAS_MEDICAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="se_realiza_en" points="670.3219999999999,1373.7333333333331 857.1919999999999,1373.7333333333331 857.1919999999999,1432.3999999999999 947.3371428571427,1432.3999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="VETERINARIOS" data-entity2="CONSULTAS_MEDICAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="atiende" points="670.3219999999999,1490.3999999999999 947.3371428571427,1490.3999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CLINICAS" data-entity2="REMITOS_BIOLOGICOS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="emite_desde" points="670.3219999999999,1355.0666666666666 680.3219999999999,1355.0666666666666 680.3219999999999,953.5999999999999 1406.8291428571426,953.5999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="LABORATORIOS" data-entity2="REMITOS_BIOLOGICOS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="recibe_en" points="1147.946,244.93333333333322 1344.1239999999998,244.93333333333317 1344.1239999999998,827.5999999999999 1406.8291428571426,827.5999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="TRANSPORTISTAS" data-entity2="ENVIOS_LABORATORIO" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="transporta" points="1643.0359999999998,626.9333333333333 1932.4779999999996,626.9333333333333" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CLIENTES" data-entity2="MASCOTAS" data-cardinality1="one" data-cardinality2="many" data-identifying="true" data-label="es_responsable_de" points="213.70399999999995,606.9333333333332 509.986,606.9333333333333" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="MASCOTAS" data-entity2="HISTORIAS_CLINICAS" data-cardinality1="one" data-cardinality2="one" data-identifying="true" data-label="posee_1_a_1" points="663.386,575.5999999999999 937.1919999999999,575.5999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="MASCOTAS" data-entity2="CONSULTAS_MEDICAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="recibe_atencion" points="663.386,622.5999999999999 690.3219999999999,622.5999999999999 690.3219999999999,1339.4333333333332 867.1919999999999,1339.4333333333332 867.1919999999999,1374.3999999999999 947.3371428571427,1374.3999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="MASCOTAS" data-entity2="VACUNAS_APLICADAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="recibe_dosis" points="663.386,528.5999999999999 680.3219999999999,528.5999999999999 680.3219999999999,113.29999999999995 1324.1239999999998,113.29999999999995 1324.1239999999998,196.6333333333332 1404.1239999999998,196.6333333333332" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CONSULTAS_MEDICAS" data-entity2="TRATAMIENTOS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="prescribe" points="1140.3371428571427,1455.6 1404.1239999999998,1455.6" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CONSULTAS_MEDICAS" data-entity2="VACUNAS_APLICADAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="suministra_en" points="1140.3371428571427,1362.8 1167.946,1362.8 1167.946,210.6333333333332 1404.1239999999998,210.6333333333332" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CONSULTAS_MEDICAS" data-entity2="ORDENES_DERIVACION" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="genera" points="1140.3371428571427,1409.1999999999998 1177.946,1409.1999999999998 1177.946,1176.2666666666667 1417.2279999999998,1176.2666666666667" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CONSULTAS_MEDICAS" data-entity2="COMPROBANTES" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="factura" points="1140.3371428571427,1501.9999999999998 1157.946,1502 1157.946,1636.6 1410.5799999999997,1636.6" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="CONSERVADORAS" data-entity2="REMITOS_BIOLOGICOS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="aloja" points="1147.946,800.5999999999999 1324.1239999999998,800.5999999999999 1324.1239999999998,911.5999999999999 1406.8291428571426,911.5999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="PRECINTOS_SANITARIOS" data-entity2="REMITOS_BIOLOGICOS" data-cardinality1="one" data-cardinality2="zero-one" data-identifying="true" data-label="sella" points="1147.9459999999997,383.5999999999999 1334.1239999999998,383.5999999999999 1334.1239999999998,869.5999999999999 1406.8291428571426,869.5999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="REMITOS_BIOLOGICOS" data-entity2="HISTORIAL_ESTADOS_REMITO" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="registra_trazabilidad" points="1639.4291428571426,890.5999999999999 1932.4779999999996,890.5999999999999" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="REMITOS_BIOLOGICOS" data-entity2="ENVIOS_LABORATORIO" data-cardinality1="one" data-cardinality2="zero-one" data-identifying="true" data-label="se_despacha_en" points="1639.4291428571426,838.0999999999999 1653.0359999999996,838.0999999999999 1653.0359999999996,682.2666666666665 1932.4779999999996,682.2666666666665" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="REMITOS_BIOLOGICOS" data-entity2="MUESTRAS_BIOLOGICAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="contiene" points="1639.4291428571426,943.0999999999999 1653.0359999999996,943.0999999999999 1653.0359999999996,1114.3 1862.4779999999996,1114.3 1862.4779999999996,1224.6 1937.7579999999996,1224.6" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="ORDENES_DERIVACION" data-entity2="MUESTRAS_BIOLOGICAS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="origina" points="1616.8279999999997,1148.6 1852.4779999999996,1148.6 1852.4779999999996,1277.1 1937.7579999999996,1277.1" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="MUESTRAS_BIOLOGICAS" data-entity2="HISTORIAL_ESTADOS_MUESTRA" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="registra_inmutable" points="2157.1579999999994,1312.1 2442.6399999999994,1312.1" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="MUESTRAS_BIOLOGICAS" data-entity2="RESULTADOS_ANALISIS" data-cardinality1="one" data-cardinality2="zero-one" data-identifying="true" data-label="obtiene" points="2157.1579999999994,1242.1 2175.0779999999995,1242.1 2175.0779999999995,1096.4333333333332 2442.6399999999994,1096.4333333333332" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="PROFESIONALES_LABORATORIO" data-entity2="RESULTADOS_ANALISIS" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="firma" points="1643.0359999999996,68 2362.6399999999994,68 2362.6399999999994,1033.7666666666664 2442.6399999999994,1033.7666666666664" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="COMPROBANTES" data-entity2="DETALLES_COMPROBANTE" data-cardinality1="one" data-cardinality2="many" data-identifying="true" data-label="desglosa" points="1636.5799999999997,1636.6 1932.4779999999996,1636.6" fill="none" stroke="var(--_line)" stroke-width="1" />
+<g class="entity" data-id="CATALOGO_ESPECIES" data-label="CATALOGO_ESPECIES">
+  <rect x="40" y="386.93333333333317" width="173.70399999999995" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="386.93333333333317" width="173.70399999999995" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="126.85199999999998" y="403.93333333333317" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CATALOGO_ESPECIES</text>
+  <line x1="40" y1="420.93333333333317" x2="213.70399999999995" y2="420.93333333333317" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="126.85199999999998" y="431.93333333333317" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="MASCOTAS" data-label="MASCOTAS">
+  <rect x="509.986" y="481.5999999999999" width="153.39999999999998" height="188" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="509.986" y="481.5999999999999" width="153.39999999999998" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="586.6859999999999" y="498.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">MASCOTAS</text>
+  <line x1="509.986" y1="515.5999999999999" x2="663.386" y2="515.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="515.986" y="519.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="527.141" y="526.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="546.2959999999999" y="526.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="655.386" y="526.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <text x="517.986" y="548.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="655.386" y="548.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">nombre</tspan></text>
+  <rect x="515.986" y="563.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="527.141" y="570.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="546.2959999999999" y="570.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="655.386" y="570.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">especie_id</tspan></text>
+  <text x="517.986" y="592.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="655.386" y="592.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">raza</tspan></text>
+  <text x="517.986" y="614.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="655.386" y="614.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">edad</tspan></text>
+  <text x="517.986" y="636.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="655.386" y="636.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">sexo</tspan></text>
+  <rect x="515.986" y="651.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="527.141" y="658.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="546.2959999999999" y="658.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="655.386" y="658.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">cliente_id</tspan></text>
+</g>
+<g class="entity" data-id="CATALOGO_VACUNAS" data-label="CATALOGO_VACUNAS">
+  <rect x="499.582" y="74.29999999999995" width="170.73999999999995" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="499.582" y="74.29999999999995" width="170.73999999999995" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="584.952" y="91.29999999999995" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CATALOGO_VACUNAS</text>
+  <line x1="499.582" y1="108.29999999999995" x2="670.3219999999999" y2="108.29999999999995" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="584.952" y="119.29999999999995" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="CATALOGO_TIPOS_MUESTRA" data-label="CATALOGO_TIPOS_MUESTRA">
+  <rect x="1424.1309999999999" y="1301.6" width="218.90499999999992" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1424.1309999999999" y="1301.6" width="218.90499999999992" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1533.5834999999997" y="1318.6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CATALOGO_TIPOS_MUESTRA</text>
+  <line x1="1424.1309999999999" y1="1335.6" x2="1643.0359999999998" y2="1335.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1533.5834999999997" y="1346.6" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="MUESTRAS_BIOLOGICAS" data-label="MUESTRAS_BIOLOGICAS">
+  <rect x="1937.7579999999996" y="1172.1" width="219.4" height="210" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1937.7579999999996" y="1172.1" width="219.4" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2047.4579999999996" y="1189.1" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">MUESTRAS_BIOLOGICAS</text>
+  <line x1="1937.7579999999996" y1="1206.1" x2="2157.1579999999994" y2="1206.1" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1943.7579999999996" y="1210.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1954.9129999999996" y="1217.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1974.0679999999995" y="1217.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2149.1579999999994" y="1217.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="1943.7579999999996" y="1232.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1954.9129999999996" y="1239.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">UK</text>
+  <text x="1974.0679999999995" y="1239.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.1579999999994" y="1239.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">codigo_muestra</tspan></text>
+  <rect x="1943.7579999999996" y="1254.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1954.9129999999996" y="1261.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1974.0679999999995" y="1261.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2149.1579999999994" y="1261.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">orden_id</tspan></text>
+  <rect x="1943.7579999999996" y="1276.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1954.9129999999996" y="1283.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1974.0679999999995" y="1283.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2149.1579999999994" y="1283.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">tipo_muestra_id</tspan></text>
+  <text x="1945.7579999999996" y="1305.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.1579999999994" y="1305.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_extraccion</tspan></text>
+  <rect x="1943.7579999999996" y="1320.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1954.9129999999996" y="1327.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1974.0679999999995" y="1327.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2149.1579999999994" y="1327.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">remito_id</tspan></text>
+  <text x="1945.7579999999996" y="1349.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.1579999999994" y="1349.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado_actual</tspan></text>
+  <text x="1945.7579999999996" y="1371.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.1579999999994" y="1371.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">motivo_rechazo</tspan></text>
+</g>
+<g class="entity" data-id="CATALOGO_TIPOS_ESTUDIO" data-label="CATALOGO_TIPOS_ESTUDIO">
+  <rect x="937.1919999999999" y="1092.9333333333332" width="210.7539999999999" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="937.1919999999999" y="1092.9333333333332" width="210.7539999999999" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1042.569" y="1109.9333333333332" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CATALOGO_TIPOS_ESTUDIO</text>
+  <line x1="937.1919999999999" y1="1126.9333333333332" x2="1147.946" y2="1126.9333333333332" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1042.569" y="1137.9333333333332" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="ORDENES_DERIVACION" data-label="ORDENES_DERIVACION">
+  <rect x="1417.2279999999998" y="1065.6" width="199.6" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1417.2279999999998" y="1065.6" width="199.6" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1517.0279999999998" y="1082.6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">ORDENES_DERIVACION</text>
+  <line x1="1417.2279999999998" y1="1099.6" x2="1616.8279999999997" y2="1099.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1423.2279999999998" y="1103.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1434.3829999999998" y="1110.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1453.5379999999998" y="1110.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1608.8279999999997" y="1110.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="1423.2279999999998" y="1125.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1434.3829999999998" y="1132.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1453.5379999999998" y="1132.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1608.8279999999997" y="1132.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">consulta_id</tspan></text>
+  <rect x="1423.2279999999998" y="1147.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1434.3829999999998" y="1154.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1453.5379999999998" y="1154.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1608.8279999999997" y="1154.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">tipo_estudio_id</tspan></text>
+  <text x="1425.2279999999998" y="1176.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1608.8279999999997" y="1176.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">indicaciones</tspan></text>
+  <text x="1425.2279999999998" y="1198.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1608.8279999999997" y="1198.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">prioridad</tspan></text>
+  <text x="1425.2279999999998" y="1220.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1608.8279999999997" y="1220.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_emision</tspan></text>
+</g>
+<g class="entity" data-id="VACUNAS_APLICADAS" data-label="VACUNAS_APLICADAS">
+  <rect x="1404.1239999999998" y="168.6333333333332" width="173.70399999999995" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1404.1239999999998" y="168.6333333333332" width="173.70399999999995" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1490.9759999999997" y="185.6333333333332" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">VACUNAS_APLICADAS</text>
+  <line x1="1404.1239999999998" y1="202.6333333333332" x2="1577.8279999999997" y2="202.6333333333332" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1490.9759999999997" y="213.6333333333332" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="LABORATORIOS" data-label="LABORATORIOS">
+  <rect x="1007.9459999999998" y="207.5999999999999" width="140" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1007.9459999999998" y="207.5999999999999" width="140" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1077.946" y="224.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">LABORATORIOS</text>
+  <line x1="1007.9459999999998" y1="241.5999999999999" x2="1147.946" y2="241.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1077.946" y="252.5999999999999" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="PROFESIONALES_LABORATORIO" data-label="PROFESIONALES_LABORATORIO">
+  <rect x="1404.1239999999998" y="40" width="238.9119999999999" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1404.1239999999998" y="40" width="238.9119999999999" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1523.5799999999997" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">PROFESIONALES_LABORATORIO</text>
+  <line x1="1404.1239999999998" y1="74" x2="1643.0359999999996" y2="74" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1523.5799999999997" y="85" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="CLINICAS" data-label="CLINICAS">
+  <rect x="530.3219999999999" y="1336.3999999999999" width="140" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="530.3219999999999" y="1336.3999999999999" width="140" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="600.3219999999999" y="1353.3999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CLINICAS</text>
+  <line x1="530.3219999999999" y1="1370.3999999999999" x2="670.3219999999999" y2="1370.3999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="600.3219999999999" y="1381.3999999999999" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="CONSULTAS_MEDICAS" data-label="CONSULTAS_MEDICAS">
+  <rect x="947.3371428571427" y="1316.3999999999999" width="193" height="232" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="947.3371428571427" y="1316.3999999999999" width="193" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1043.8371428571427" y="1333.3999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CONSULTAS_MEDICAS</text>
+  <line x1="947.3371428571427" y1="1350.3999999999999" x2="1140.3371428571427" y2="1350.3999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="953.3371428571427" y="1354.3999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="964.4921428571427" y="1361.3999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="983.6471428571426" y="1361.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1132.3371428571427" y="1361.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="953.3371428571427" y="1376.3999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="964.4921428571427" y="1383.3999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="983.6471428571426" y="1383.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1132.3371428571427" y="1383.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">mascota_id</tspan></text>
+  <rect x="953.3371428571427" y="1398.3999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="964.4921428571427" y="1405.3999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="983.6471428571426" y="1405.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1132.3371428571427" y="1405.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">clinica_id</tspan></text>
+  <rect x="953.3371428571427" y="1420.3999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="964.4921428571427" y="1427.3999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="983.6471428571426" y="1427.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1132.3371428571427" y="1427.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">veterinario_id</tspan></text>
+  <text x="955.3371428571427" y="1449.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1132.3371428571427" y="1449.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_inicio</tspan></text>
+  <text x="955.3371428571427" y="1471.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1132.3371428571427" y="1471.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">duracion_minutos</tspan></text>
+  <text x="955.3371428571427" y="1493.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1132.3371428571427" y="1493.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">motivo</tspan></text>
+  <text x="955.3371428571427" y="1515.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1132.3371428571427" y="1515.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">diagnostico</tspan></text>
+  <text x="955.3371428571427" y="1537.3999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">float</tspan></text>
+  <text x="1132.3371428571427" y="1537.3999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">costo_consulta</tspan></text>
+</g>
+<g class="entity" data-id="VETERINARIOS" data-label="VETERINARIOS">
+  <rect x="530.3219999999999" y="1462.3999999999999" width="140" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="530.3219999999999" y="1462.3999999999999" width="140" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="600.3219999999999" y="1479.3999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">VETERINARIOS</text>
+  <line x1="530.3219999999999" y1="1496.3999999999999" x2="670.3219999999999" y2="1496.3999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="600.3219999999999" y="1507.3999999999999" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="REMITOS_BIOLOGICOS" data-label="REMITOS_BIOLOGICOS">
+  <rect x="1406.8291428571426" y="785.5999999999999" width="232.6" height="210" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1406.8291428571426" y="785.5999999999999" width="232.6" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1523.1291428571426" y="802.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">REMITOS_BIOLOGICOS</text>
+  <line x1="1406.8291428571426" y1="819.5999999999999" x2="1639.4291428571426" y2="819.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1412.8291428571426" y="823.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1423.9841428571426" y="830.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1443.1391428571426" y="830.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1631.4291428571426" y="830.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="1412.8291428571426" y="845.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1423.9841428571426" y="852.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">UK</text>
+  <text x="1443.1391428571426" y="852.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1631.4291428571426" y="852.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">numero_remito</tspan></text>
+  <rect x="1412.8291428571426" y="867.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1423.9841428571426" y="874.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1443.1391428571426" y="874.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1631.4291428571426" y="874.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">clinica_origen_id</tspan></text>
+  <rect x="1412.8291428571426" y="889.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1423.9841428571426" y="896.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1443.1391428571426" y="896.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1631.4291428571426" y="896.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">laboratorio_destino_id</tspan></text>
+  <rect x="1412.8291428571426" y="911.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1423.9841428571426" y="918.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1443.1391428571426" y="918.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1631.4291428571426" y="918.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">conservadora_id</tspan></text>
+  <text x="1414.8291428571426" y="940.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1631.4291428571426" y="940.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">precinto_id</tspan></text>
+  <text x="1414.8291428571426" y="962.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1631.4291428571426" y="962.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado</tspan></text>
+  <text x="1414.8291428571426" y="984.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1631.4291428571426" y="984.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_creacion</tspan></text>
+</g>
+<g class="entity" data-id="TRANSPORTISTAS" data-label="TRANSPORTISTAS">
+  <rect x="1494.5259999999998" y="598.9333333333333" width="148.50999999999996" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1494.5259999999998" y="598.9333333333333" width="148.50999999999996" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1568.7809999999997" y="615.9333333333333" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">TRANSPORTISTAS</text>
+  <line x1="1494.5259999999998" y1="632.9333333333333" x2="1643.0359999999998" y2="632.9333333333333" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1568.7809999999997" y="643.9333333333333" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="ENVIOS_LABORATORIO" data-label="ENVIOS_LABORATORIO">
+  <rect x="1932.4779999999996" y="571.5999999999999" width="232.6" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1932.4779999999996" y="571.5999999999999" width="232.6" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2048.778" y="588.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">ENVIOS_LABORATORIO</text>
+  <line x1="1932.4779999999996" y1="605.5999999999999" x2="2165.0779999999995" y2="605.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1938.4779999999996" y="609.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1949.6329999999996" y="616.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1968.7879999999996" y="616.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2157.0779999999995" y="616.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <text x="1940.4779999999996" y="638.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2157.0779999999995" y="638.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">remito_id</tspan></text>
+  <rect x="1938.4779999999996" y="653.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1949.6329999999996" y="660.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1968.7879999999996" y="660.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2157.0779999999995" y="660.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">transportista_id</tspan></text>
+  <text x="1940.4779999999996" y="682.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2157.0779999999995" y="682.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_despacho</tspan></text>
+  <text x="1940.4779999999996" y="704.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2157.0779999999995" y="704.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_recepcion</tspan></text>
+  <text x="1940.4779999999996" y="726.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2157.0779999999995" y="726.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">observaciones_recepcion</tspan></text>
+</g>
+<g class="entity" data-id="CLIENTES" data-label="CLIENTES">
+  <rect x="73.50399999999996" y="512.9333333333332" width="140.2" height="188" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="73.50399999999996" y="512.9333333333332" width="140.2" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="143.60399999999996" y="529.9333333333332" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CLIENTES</text>
+  <line x1="73.50399999999996" y1="546.9333333333332" x2="213.70399999999995" y2="546.9333333333332" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="79.50399999999996" y="550.9333333333332" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="90.65899999999996" y="557.9333333333332" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="109.81399999999996" y="557.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="205.70399999999995" y="557.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="79.50399999999996" y="572.9333333333332" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="90.65899999999996" y="579.9333333333332" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">UK</text>
+  <text x="109.81399999999996" y="579.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="205.70399999999995" y="579.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">dni</tspan></text>
+  <text x="81.50399999999996" y="601.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="205.70399999999995" y="601.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">nombre</tspan></text>
+  <text x="81.50399999999996" y="623.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="205.70399999999995" y="623.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">apellido</tspan></text>
+  <text x="81.50399999999996" y="645.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="205.70399999999995" y="645.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">telefono</tspan></text>
+  <text x="81.50399999999996" y="667.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="205.70399999999995" y="667.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">email</tspan></text>
+  <text x="81.50399999999996" y="689.9333333333332" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="205.70399999999995" y="689.9333333333332" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">direccion</tspan></text>
+</g>
+<g class="entity" data-id="HISTORIAS_CLINICAS" data-label="HISTORIAS_CLINICAS">
+  <rect x="937.1919999999999" y="503.5999999999999" width="173.2" height="144" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="937.1919999999999" y="503.5999999999999" width="173.2" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1023.7919999999999" y="520.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">HISTORIAS_CLINICAS</text>
+  <line x1="937.1919999999999" y1="537.5999999999999" x2="1110.3919999999998" y2="537.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="943.1919999999999" y="541.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="954.3469999999999" y="548.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="973.5019999999998" y="548.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1102.3919999999998" y="548.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <text x="945.1919999999999" y="570.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1102.3919999999998" y="570.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">mascota_id</tspan></text>
+  <text x="945.1919999999999" y="592.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1102.3919999999998" y="592.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_apertura</tspan></text>
+  <text x="945.1919999999999" y="614.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1102.3919999999998" y="614.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">antecedentes</tspan></text>
+  <text x="945.1919999999999" y="636.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1102.3919999999998" y="636.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">alergias</tspan></text>
+</g>
+<g class="entity" data-id="TRATAMIENTOS" data-label="TRATAMIENTOS">
+  <rect x="1404.1239999999998" y="1427.6" width="140" height="56" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1404.1239999999998" y="1427.6" width="140" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1474.1239999999998" y="1444.6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">TRATAMIENTOS</text>
+  <line x1="1404.1239999999998" y1="1461.6" x2="1544.1239999999998" y2="1461.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1474.1239999999998" y="1472.6" text-anchor="middle" dy="0.35em" font-size="11" fill="var(--_text-faint)" font-style="italic">(no attributes)</text>
+</g>
+<g class="entity" data-id="COMPROBANTES" data-label="COMPROBANTES">
+  <rect x="1410.5799999999997" y="1553.6" width="226" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1410.5799999999997" y="1553.6" width="226" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1523.5799999999997" y="1570.6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">COMPROBANTES</text>
+  <line x1="1410.5799999999997" y1="1587.6" x2="1636.5799999999997" y2="1587.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1416.5799999999997" y="1591.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1427.7349999999997" y="1598.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1446.8899999999996" y="1598.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1628.5799999999997" y="1598.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="1416.5799999999997" y="1613.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1427.7349999999997" y="1620.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">UK</text>
+  <text x="1446.8899999999996" y="1620.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1628.5799999999997" y="1620.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">numero_comprobante</tspan></text>
+  <rect x="1416.5799999999997" y="1635.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1427.7349999999997" y="1642.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1446.8899999999996" y="1642.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1628.5799999999997" y="1642.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">consulta_id</tspan></text>
+  <text x="1418.5799999999997" y="1664.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1628.5799999999997" y="1664.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estrategia_tarifa</tspan></text>
+  <text x="1418.5799999999997" y="1686.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">float</tspan></text>
+  <text x="1628.5799999999997" y="1686.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">monto_total</tspan></text>
+  <text x="1418.5799999999997" y="1708.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1628.5799999999997" y="1708.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_emision</tspan></text>
+</g>
+<g class="entity" data-id="CONSERVADORAS" data-label="CONSERVADORAS">
+  <rect x="974.7459999999999" y="717.5999999999999" width="173.2" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="974.7459999999999" y="717.5999999999999" width="173.2" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1061.3459999999998" y="734.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">CONSERVADORAS</text>
+  <line x1="974.7459999999999" y1="751.5999999999999" x2="1147.946" y2="751.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="980.7459999999999" y="755.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="991.9009999999998" y="762.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1011.0559999999998" y="762.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1139.946" y="762.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="980.7459999999999" y="777.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="991.9009999999998" y="784.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">UK</text>
+  <text x="1011.0559999999998" y="784.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1139.946" y="784.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">codigo</tspan></text>
+  <text x="982.7459999999999" y="806.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1139.946" y="806.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">capacidad_maxima</tspan></text>
+  <text x="982.7459999999999" y="828.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">float</tspan></text>
+  <text x="1139.946" y="828.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">temperatura_min</tspan></text>
+  <text x="982.7459999999999" y="850.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">float</tspan></text>
+  <text x="1139.946" y="850.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">temperatura_max</tspan></text>
+  <text x="982.7459999999999" y="872.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1139.946" y="872.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">disponible</tspan></text>
+</g>
+<g class="entity" data-id="PRECINTOS_SANITARIOS" data-label="PRECINTOS_SANITARIOS">
+  <rect x="959.4219999999998" y="333.5999999999999" width="188.52399999999994" height="100" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="959.4219999999998" y="333.5999999999999" width="188.52399999999994" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1053.6839999999997" y="350.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">PRECINTOS_SANITARIOS</text>
+  <line x1="959.4219999999998" y1="367.5999999999999" x2="1147.9459999999997" y2="367.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="965.4219999999998" y="371.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="976.5769999999998" y="378.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="995.7319999999997" y="378.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="1139.9459999999997" y="378.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="965.4219999999998" y="393.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="976.5769999999998" y="400.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">UK</text>
+  <text x="995.7319999999997" y="400.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1139.9459999999997" y="400.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">numero_serie</tspan></text>
+  <text x="967.4219999999998" y="422.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="1139.9459999999997" y="422.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado</tspan></text>
+</g>
+<g class="entity" data-id="HISTORIAL_ESTADOS_REMITO" data-label="HISTORIAL_ESTADOS_REMITO">
+  <rect x="1932.4779999999996" y="807.5999999999999" width="224.83299999999988" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1932.4779999999996" y="807.5999999999999" width="224.83299999999988" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2044.8944999999997" y="824.5999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">HISTORIAL_ESTADOS_REMITO</text>
+  <line x1="1932.4779999999996" y1="841.5999999999999" x2="2157.3109999999997" y2="841.5999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1938.4779999999996" y="845.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1949.6329999999996" y="852.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1968.7879999999996" y="852.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2149.3109999999997" y="852.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="1938.4779999999996" y="867.5999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1949.6329999999996" y="874.5999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1968.7879999999996" y="874.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2149.3109999999997" y="874.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">remito_id</tspan></text>
+  <text x="1940.4779999999996" y="896.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.3109999999997" y="896.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado_anterior</tspan></text>
+  <text x="1940.4779999999996" y="918.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.3109999999997" y="918.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado_nuevo</tspan></text>
+  <text x="1940.4779999999996" y="940.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.3109999999997" y="940.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora</tspan></text>
+  <text x="1940.4779999999996" y="962.5999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2149.3109999999997" y="962.5999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">observacion</tspan></text>
+</g>
+<g class="entity" data-id="HISTORIAL_ESTADOS_MUESTRA" data-label="HISTORIAL_ESTADOS_MUESTRA">
+  <rect x="2442.6399999999994" y="1229.1" width="239.6529999999999" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="2442.6399999999994" y="1229.1" width="239.6529999999999" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2562.4664999999995" y="1246.1" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">HISTORIAL_ESTADOS_MUESTRA</text>
+  <line x1="2442.6399999999994" y1="1263.1" x2="2682.292999999999" y2="1263.1" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="2448.6399999999994" y="1267.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="2459.7949999999996" y="1274.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="2478.9499999999994" y="1274.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2674.292999999999" y="1274.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="2448.6399999999994" y="1289.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="2459.7949999999996" y="1296.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="2478.9499999999994" y="1296.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2674.292999999999" y="1296.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">muestra_id</tspan></text>
+  <text x="2450.6399999999994" y="1318.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2674.292999999999" y="1318.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado_anterior</tspan></text>
+  <text x="2450.6399999999994" y="1340.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2674.292999999999" y="1340.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">estado_nuevo</tspan></text>
+  <text x="2450.6399999999994" y="1362.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2674.292999999999" y="1362.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora</tspan></text>
+  <text x="2450.6399999999994" y="1384.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2674.292999999999" y="1384.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">observacion</tspan></text>
+</g>
+<g class="entity" data-id="RESULTADOS_ANALISIS" data-label="RESULTADOS_ANALISIS">
+  <rect x="2442.6399999999994" y="971.0999999999999" width="259" height="188" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="2442.6399999999994" y="971.0999999999999" width="259" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2572.1399999999994" y="988.0999999999999" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">RESULTADOS_ANALISIS</text>
+  <line x1="2442.6399999999994" y1="1005.0999999999999" x2="2701.6399999999994" y2="1005.0999999999999" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="2448.6399999999994" y="1009.0999999999999" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="2459.7949999999996" y="1016.0999999999999" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="2478.9499999999994" y="1016.0999999999999" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2693.6399999999994" y="1016.0999999999999" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <text x="2450.6399999999994" y="1038.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2693.6399999999994" y="1038.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">muestra_id</tspan></text>
+  <rect x="2448.6399999999994" y="1053.1" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="2459.7949999999996" y="1060.1" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="2478.9499999999994" y="1060.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2693.6399999999994" y="1060.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">profesional_laboratorio_id</tspan></text>
+  <text x="2450.6399999999994" y="1082.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2693.6399999999994" y="1082.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">valores_medidos</tspan></text>
+  <text x="2450.6399999999994" y="1104.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2693.6399999999994" y="1104.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">conclusion</tspan></text>
+  <text x="2450.6399999999994" y="1126.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">float</tspan></text>
+  <text x="2693.6399999999994" y="1126.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">costo_analisis</tspan></text>
+  <text x="2450.6399999999994" y="1148.1" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2693.6399999999994" y="1148.1" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">fecha_hora_analisis</tspan></text>
+</g>
+<g class="entity" data-id="DETALLES_COMPROBANTE" data-label="DETALLES_COMPROBANTE">
+  <rect x="1932.4779999999996" y="1564.6" width="208.53099999999995" height="144" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1932.4779999999996" y="1564.6" width="208.53099999999995" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2036.7434999999996" y="1581.6" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">DETALLES_COMPROBANTE</text>
+  <line x1="1932.4779999999996" y1="1598.6" x2="2141.0089999999996" y2="1598.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="1938.4779999999996" y="1602.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1949.6329999999996" y="1609.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="1968.7879999999996" y="1609.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2133.0089999999996" y="1609.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <rect x="1938.4779999999996" y="1624.6" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="1949.6329999999996" y="1631.6" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">FK</text>
+  <text x="1968.7879999999996" y="1631.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="2133.0089999999996" y="1631.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">comprobante_id</tspan></text>
+  <text x="1940.4779999999996" y="1653.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2133.0089999999996" y="1653.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">tipo_concepto</tspan></text>
+  <text x="1940.4779999999996" y="1675.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="2133.0089999999996" y="1675.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">concepto</tspan></text>
+  <text x="1940.4779999999996" y="1697.6" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">float</tspan></text>
+  <text x="2133.0089999999996" y="1697.6" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">monto</tspan></text>
+</g>
+<line x1="217.70399999999995" y1="418.2666666666665" x2="217.70399999999995" y2="430.2666666666665" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="221.70399999999995" y1="418.2666666666665" x2="221.70399999999995" y2="430.2666666666665" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="505.986" y1="551.2666666666667" x2="493.986" y2="544.2666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="505.986" y1="544.2666666666667" x2="493.986" y2="544.2666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="505.986" y1="537.2666666666667" x2="493.986" y2="544.2666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="489.986" cy="544.2666666666667" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="217.70399999999998" y1="399.59999999999985" x2="217.70399999999992" y2="411.59999999999985" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="221.70399999999998" y1="399.59999999999985" x2="221.70399999999992" y2="411.59999999999985" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="495.582" y1="109.29999999999995" x2="483.582" y2="102.29999999999995" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="495.582" y1="102.29999999999995" x2="483.582" y2="102.29999999999995" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="495.582" y1="95.29999999999995" x2="483.582" y2="102.29999999999995" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="479.582" cy="102.29999999999995" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1647.0359999999998" y1="1323.6" x2="1647.0359999999998" y2="1335.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1651.0359999999998" y1="1323.6" x2="1651.0359999999998" y2="1335.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1336.6" x2="1921.7579999999996" y2="1329.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1329.6" x2="1921.7579999999996" y2="1329.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1322.6" x2="1921.7579999999996" y2="1329.6" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1917.7579999999996" cy="1329.6" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1151.946" y1="1114.9333333333332" x2="1151.946" y2="1126.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1155.946" y1="1114.9333333333332" x2="1155.946" y2="1126.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1413.2279999999998" y1="1127.9333333333332" x2="1401.2279999999998" y2="1120.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1413.2279999999998" y1="1120.9333333333332" x2="1401.2279999999998" y2="1120.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1413.2279999999998" y1="1113.9333333333332" x2="1401.2279999999998" y2="1120.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1397.2279999999998" cy="1120.9333333333332" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="674.3219999999999" y1="96.29999999999995" x2="674.3219999999999" y2="108.29999999999995" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="678.3219999999999" y1="96.29999999999995" x2="678.3219999999999" y2="108.29999999999995" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="189.6333333333332" x2="1388.1239999999998" y2="182.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="182.6333333333332" x2="1388.1239999999998" y2="182.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="175.6333333333332" x2="1388.1239999999998" y2="182.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1384.1239999999998" cy="182.6333333333332" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1151.946" y1="220.2666666666666" x2="1151.946" y2="232.2666666666666" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1155.946" y1="220.26666666666662" x2="1155.946" y2="232.26666666666662" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="75" x2="1388.1239999999998" y2="68" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="68" x2="1388.1239999999998" y2="68" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="61" x2="1388.1239999999998" y2="68" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1384.1239999999998" cy="68" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="674.3219999999999" y1="1367.7333333333331" x2="674.3219999999999" y2="1379.7333333333331" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="678.3219999999999" y1="1367.7333333333331" x2="678.3219999999999" y2="1379.7333333333331" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1439.3999999999999" x2="931.3371428571427" y2="1432.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1432.3999999999999" x2="931.3371428571427" y2="1432.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1425.3999999999999" x2="931.3371428571427" y2="1432.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="927.3371428571427" cy="1432.3999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="674.3219999999999" y1="1484.3999999999999" x2="674.3219999999999" y2="1496.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="678.3219999999999" y1="1484.3999999999999" x2="678.3219999999999" y2="1496.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1497.3999999999999" x2="931.3371428571427" y2="1490.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1490.3999999999999" x2="931.3371428571427" y2="1490.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1483.3999999999999" x2="931.3371428571427" y2="1490.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="927.3371428571427" cy="1490.3999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="674.3219999999999" y1="1349.0666666666666" x2="674.3219999999999" y2="1361.0666666666666" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="678.3219999999999" y1="1349.0666666666666" x2="678.3219999999999" y2="1361.0666666666666" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="960.5999999999999" x2="1390.8291428571426" y2="953.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="953.5999999999999" x2="1390.8291428571426" y2="953.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="946.5999999999999" x2="1390.8291428571426" y2="953.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1386.8291428571426" cy="953.5999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1151.946" y1="238.93333333333322" x2="1151.946" y2="250.93333333333322" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1155.946" y1="238.93333333333322" x2="1155.946" y2="250.93333333333322" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="834.5999999999999" x2="1390.8291428571426" y2="827.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="827.5999999999999" x2="1390.8291428571426" y2="827.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="820.5999999999999" x2="1390.8291428571426" y2="827.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1386.8291428571426" cy="827.5999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1647.0359999999998" y1="620.9333333333333" x2="1647.0359999999998" y2="632.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1651.0359999999998" y1="620.9333333333333" x2="1651.0359999999998" y2="632.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="633.9333333333333" x2="1916.4779999999996" y2="626.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="626.9333333333333" x2="1916.4779999999996" y2="626.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="619.9333333333333" x2="1916.4779999999996" y2="626.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1912.4779999999996" cy="626.9333333333333" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="217.70399999999995" y1="600.9333333333332" x2="217.70399999999995" y2="612.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="221.70399999999995" y1="600.9333333333332" x2="221.70399999999995" y2="612.9333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="505.986" y1="613.9333333333333" x2="493.986" y2="606.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="505.986" y1="606.9333333333333" x2="493.986" y2="606.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="505.986" y1="599.9333333333333" x2="493.986" y2="606.9333333333333" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="667.386" y1="569.5999999999999" x2="667.386" y2="581.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="671.386" y1="569.5999999999999" x2="671.386" y2="581.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="933.1919999999999" y1="581.5999999999999" x2="933.1919999999999" y2="569.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="929.1919999999999" y1="581.5999999999999" x2="929.1919999999999" y2="569.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="667.386" y1="616.5999999999999" x2="667.386" y2="628.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="671.386" y1="616.5999999999999" x2="671.386" y2="628.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1381.3999999999999" x2="931.3371428571427" y2="1374.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1374.3999999999999" x2="931.3371428571427" y2="1374.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="943.3371428571427" y1="1367.3999999999999" x2="931.3371428571427" y2="1374.3999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="927.3371428571427" cy="1374.3999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="667.386" y1="522.5999999999999" x2="667.386" y2="534.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="671.386" y1="522.5999999999999" x2="671.386" y2="534.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="203.6333333333332" x2="1388.1239999999998" y2="196.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="196.6333333333332" x2="1388.1239999999998" y2="196.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="189.6333333333332" x2="1388.1239999999998" y2="196.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1384.1239999999998" cy="196.6333333333332" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1144.3371428571427" y1="1449.6" x2="1144.3371428571427" y2="1461.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1148.3371428571427" y1="1449.6" x2="1148.3371428571427" y2="1461.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="1462.6" x2="1388.1239999999998" y2="1455.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="1455.6" x2="1388.1239999999998" y2="1455.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="1448.6" x2="1388.1239999999998" y2="1455.6" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1384.1239999999998" cy="1455.6" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1144.3371428571427" y1="1356.8" x2="1144.3371428571427" y2="1368.8" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1148.3371428571427" y1="1356.8" x2="1148.3371428571427" y2="1368.8" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="217.6333333333332" x2="1388.1239999999998" y2="210.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="210.6333333333332" x2="1388.1239999999998" y2="210.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1400.1239999999998" y1="203.6333333333332" x2="1388.1239999999998" y2="210.6333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1384.1239999999998" cy="210.6333333333332" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1144.3371428571427" y1="1403.1999999999998" x2="1144.3371428571427" y2="1415.1999999999998" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1148.3371428571427" y1="1403.1999999999998" x2="1148.3371428571427" y2="1415.1999999999998" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1413.2279999999998" y1="1183.2666666666667" x2="1401.2279999999998" y2="1176.2666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1413.2279999999998" y1="1176.2666666666667" x2="1401.2279999999998" y2="1176.2666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1413.2279999999998" y1="1169.2666666666667" x2="1401.2279999999998" y2="1176.2666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1397.2279999999998" cy="1176.2666666666667" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1144.3371428571427" y1="1495.9999999999998" x2="1144.3371428571427" y2="1507.9999999999998" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1148.3371428571427" y1="1495.9999999999998" x2="1148.3371428571427" y2="1507.9999999999998" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1406.5799999999997" y1="1643.6" x2="1394.5799999999997" y2="1636.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1406.5799999999997" y1="1636.6" x2="1394.5799999999997" y2="1636.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1406.5799999999997" y1="1629.6" x2="1394.5799999999997" y2="1636.6" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1390.5799999999997" cy="1636.6" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1151.946" y1="794.5999999999999" x2="1151.946" y2="806.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1155.946" y1="794.5999999999999" x2="1155.946" y2="806.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="918.5999999999999" x2="1390.8291428571426" y2="911.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="911.5999999999999" x2="1390.8291428571426" y2="911.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="904.5999999999999" x2="1390.8291428571426" y2="911.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1386.8291428571426" cy="911.5999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1151.9459999999997" y1="377.5999999999999" x2="1151.9459999999997" y2="389.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1155.9459999999997" y1="377.5999999999999" x2="1155.9459999999997" y2="389.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1402.8291428571426" y1="875.5999999999999" x2="1402.8291428571426" y2="863.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1398.8291428571426" y1="875.5999999999999" x2="1398.8291428571426" y2="863.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1394.8291428571426" cy="869.5999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1643.4291428571426" y1="884.5999999999999" x2="1643.4291428571426" y2="896.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1647.4291428571426" y1="884.5999999999999" x2="1647.4291428571426" y2="896.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="897.5999999999999" x2="1916.4779999999996" y2="890.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="890.5999999999999" x2="1916.4779999999996" y2="890.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="883.5999999999999" x2="1916.4779999999996" y2="890.5999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1912.4779999999996" cy="890.5999999999999" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1643.4291428571426" y1="832.0999999999999" x2="1643.4291428571426" y2="844.0999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1647.4291428571426" y1="832.0999999999999" x2="1647.4291428571426" y2="844.0999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="688.2666666666665" x2="1928.4779999999996" y2="676.2666666666665" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1924.4779999999996" y1="688.2666666666665" x2="1924.4779999999996" y2="676.2666666666665" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1920.4779999999996" cy="682.2666666666665" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1643.4291428571426" y1="937.0999999999999" x2="1643.4291428571426" y2="949.0999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1647.4291428571426" y1="937.0999999999999" x2="1647.4291428571426" y2="949.0999999999999" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1231.6" x2="1921.7579999999996" y2="1224.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1224.6" x2="1921.7579999999996" y2="1224.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1217.6" x2="1921.7579999999996" y2="1224.6" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1917.7579999999996" cy="1224.6" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1620.8279999999997" y1="1142.6" x2="1620.8279999999997" y2="1154.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1624.8279999999997" y1="1142.6" x2="1624.8279999999997" y2="1154.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1284.1" x2="1921.7579999999996" y2="1277.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1277.1" x2="1921.7579999999996" y2="1277.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1933.7579999999996" y1="1270.1" x2="1921.7579999999996" y2="1277.1" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="1917.7579999999996" cy="1277.1" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2161.1579999999994" y1="1306.1" x2="2161.1579999999994" y2="1318.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2165.1579999999994" y1="1306.1" x2="2165.1579999999994" y2="1318.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1319.1" x2="2426.6399999999994" y2="1312.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1312.1" x2="2426.6399999999994" y2="1312.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1305.1" x2="2426.6399999999994" y2="1312.1" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="2422.6399999999994" cy="1312.1" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2161.1579999999994" y1="1236.1" x2="2161.1579999999994" y2="1248.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2165.1579999999994" y1="1236.1" x2="2165.1579999999994" y2="1248.1" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1102.4333333333332" x2="2438.6399999999994" y2="1090.4333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2434.6399999999994" y1="1102.4333333333332" x2="2434.6399999999994" y2="1090.4333333333332" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="2430.6399999999994" cy="1096.4333333333332" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1647.0359999999996" y1="62" x2="1647.0359999999996" y2="74" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1651.0359999999996" y1="62" x2="1651.0359999999996" y2="74" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1040.7666666666664" x2="2426.6399999999994" y2="1033.7666666666664" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1033.7666666666664" x2="2426.6399999999994" y2="1033.7666666666664" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="2438.6399999999994" y1="1026.7666666666664" x2="2426.6399999999994" y2="1033.7666666666664" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="2422.6399999999994" cy="1033.7666666666664" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1640.5799999999997" y1="1630.6" x2="1640.5799999999997" y2="1642.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1644.5799999999997" y1="1630.6" x2="1644.5799999999997" y2="1642.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="1643.6" x2="1916.4779999999996" y2="1636.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="1636.6" x2="1916.4779999999996" y2="1636.6" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="1928.4779999999996" y1="1629.6" x2="1916.4779999999996" y2="1636.6" stroke="var(--_line)" stroke-width="1.25" />
+<rect x="395.155" y="416.3796666666665" width="48.854000000000006" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="419.582" y="426.52966666666646" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">clasifica</text>
+<rect x="198.68299999999994" y="110.8609999999999" width="50.042" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="223.70399999999995" y="121.01099999999991" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">aplica_a</text>
+<rect x="1765.9699999999998" y="1319.4499999999998" width="48.854000000000006" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1790.3969999999997" y="1329.6" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">clasifica</text>
+<rect x="1261.1299999999999" y="1110.783333333333" width="42.91400000000001" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1282.587" y="1120.9333333333332" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">solicita</text>
+<rect x="1051.1806666666664" y="92.14999999999995" width="52.418000000000006" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1077.3896666666665" y="102.29999999999995" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">instancia</text>
+<rect x="1175.4446666666665" y="57.85" width="42.913999999999994" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1196.9016666666666" y="68" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">emplea</text>
+<rect x="798.8859047619046" y="1363.583333333333" width="78.55400000000002" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="838.1629047619047" y="1373.7333333333331" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">se_realiza_en</text>
+<rect x="786.7785714285712" y="1480.2499999999998" width="44.102" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="808.8295714285713" y="1490.3999999999999" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">atiende</text>
+<rect x="803.3172380952379" y="943.4499999999999" width="69.05000000000001" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="837.8422380952379" y="953.5999999999999" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">emite_desde</text>
+<rect x="1314.9449999999997" y="459.38023809523804" width="58.358" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1344.1239999999998" y="469.530238095238" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">recibe_en</text>
+<rect x="1757.9839999999997" y="616.7833333333333" width="59.54600000000001" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1787.7569999999996" y="626.9333333333333" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">transporta</text>
+<rect x="308.90599999999995" y="596.7833333333332" width="105.87800000000004" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="361.84499999999997" y="606.9333333333332" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">es_responsable_de</text>
+<rect x="766.358" y="565.4499999999999" width="67.86200000000001" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="800.289" y="575.5999999999999" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">posee_1_a_1</text>
+<rect x="646.887" y="1103.3895714285713" width="86.87" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="690.3219999999999" y="1113.5395714285714" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">recibe_atencion</text>
+<rect x="831.4646666666665" y="103.14999999999995" width="72.614" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="867.7716666666665" y="113.29999999999995" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">recibe_dosis</text>
+<rect x="1243.6455714285712" y="1445.4499999999998" width="57.17" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1272.2305714285712" y="1455.6" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">prescribe</text>
+<rect x="1129.857" y="672.2820952380953" width="76.178" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1167.946" y="682.4320952380953" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">suministra_en</text>
+<rect x="1155.895" y="1181.7467619047618" width="44.102" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1177.946" y="1191.896761904762" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">genera</text>
+<rect x="1186.701571428571" y="1626.4499999999998" width="42.913999999999994" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1208.1585714285711" y="1636.6" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">factura</text>
+<rect x="1308.0129999999997" y="799.2135714285714" width="32.221999999999994" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1324.1239999999998" y="809.3635714285714" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">aloja</text>
+<rect x="1318.0129999999997" y="559.7135714285713" width="32.221999999999994" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1334.1239999999998" y="569.8635714285713" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">sella</text>
+<rect x="1731.2325714285712" y="880.4499999999999" width="109.44200000000002" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1785.9535714285712" y="890.5999999999999" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">registra_trazabilidad</text>
+<rect x="1661.6319047619045" y="672.1166666666666" width="92.81000000000002" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1708.0369047619045" y="682.2666666666665" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">se_despacha_en</text>
+<rect x="1733.122571428571" y="1104.1499999999999" width="50.042" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1758.143571428571" y="1114.3" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">contiene</text>
+<rect x="1820.0859999999996" y="1138.4499999999998" width="42.913999999999994" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1841.5429999999997" y="1148.6" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">origina</text>
+<rect x="2251.1179999999995" y="1301.9499999999998" width="97.56200000000001" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="2299.8989999999994" y="1312.1" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">registra_inmutable</text>
+<rect x="2205.014666666666" y="1086.283333333333" width="44.102" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="2227.065666666666" y="1096.4333333333332" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">obtiene</text>
+<rect x="2346.5289999999995" y="220.9313333333333" width="32.221999999999994" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="2362.6399999999994" y="231.0813333333333" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">firma</text>
+<rect x="1757.7259999999994" y="1626.4499999999998" width="53.606" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="1784.5289999999995" y="1636.6" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">desglosa</text>
+</svg>
