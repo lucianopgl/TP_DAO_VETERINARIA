@@ -7,7 +7,7 @@
 
 ## 1. Diagrama de Clases UML — Capa de Dominio y Patrones GoF
 
-El siguiente diagrama modela todas las clases del dominio y los patrones de comportamiento (**State**, **Strategy**, **Iterator**, **Observer**), respetando la notación estándar UML de visibilidad (`+` público, `-` privado, `#` protegido) y tipos de relaciones (`*--` composición, `o--` agregación, `-->` asociación, `<|--` herencia/generalización, `..>` dependencia).
+El siguiente diagrama modela todas las clases del dominio y los patrones de comportamiento (**State**, **Strategy**, **Iterator**), respetando la notación estándar UML de visibilidad (`+` público, `-` privado, `#` protegido) y tipos de relaciones (`*--` composición, `o--` agregación, `-->` asociación, `<|--` herencia/generalización, `..>` dependencia).
 
 ```mermaid
 classDiagram
@@ -355,29 +355,6 @@ classDiagram
     EstrategiaFacturacion <|-- TarifaEstandar
     EstrategiaFacturacion <|-- TarifaUrgenciaLaboratorio
     EstrategiaFacturacion <|-- TarifaConvenioRed
-
-    %% =====================================================================
-    %% SUBDOMINIO 6: NOTIFICACIONES Y PATRÓN OBSERVER
-    %% =====================================================================
-    class Observador {
-        <<abstract>>
-        +actualizar(tipo_evento: str, datos: dict)* void
-    }
-
-    class SujetoEventos {
-        -list~Observador~ _observadores
-        +suscribir(observador: Observador) void
-        +desuscribir(observador: Observador) void
-        +notificar(tipo_evento: str, **datos) void
-    }
-
-    class ObservadorAuditoria {
-        +list~dict~ registro_eventos
-        +actualizar(tipo_evento: str, datos: dict) void
-    }
-
-    SujetoEventos "1" o-- "0..*" Observador : notifica a >
-    Observador <|-- ObservadorAuditoria
 ```
 
 ---
@@ -666,15 +643,6 @@ classDiagram
 
 ---
 
-### 4.6. Subdominio de Eventos y Patrón Observer
-
-#### `SujetoEventos`, `Observador` y `ObservadorAuditoria` (`src/patrones/observador_eventos.py`)
-* **Propósito:** Desacoplar la ocurrencia de sucesos críticos (como el rechazo de una muestra en recepción de laboratorio o la finalización de un resultado bioquímico) de los actores que deben enterarse (auditoría, alertas en interfaz, recordatorios al cliente).
-* **Decisiones de Diseño:**
-  * Relación 1 a N mediante agregación (`_observadores: list[Observador]`). El sujeto invoca `observador.actualizar(tipo_evento, datos)` sin conocer la clase concreta del observador.
-
----
-
 ## 5. Naturaleza de las Relaciones entre Clases
 
 En el diseño se emplearon los **5 tipos de relaciones fundamentales de la POO** con criterio semántico estricto:
@@ -701,11 +669,10 @@ Este diseño ha sido estructurado para defender cada decisión ante el tribunal 
 2. **O — Open/Closed Principle (Abierto/Cerrado):**
    * El sistema está **abierto a la extensión y cerrado a la modificación**:
      * Si la clínica incorpora una *"Tarifa Fin de Semana"* o *"Tarifa Jubilados"*, basta con crear una nueva subclase de `EstrategiaFacturacion` sin modificar una sola línea de `ComprobanteAtencion` ni de `FacturacionDAO`.
-     * Si se requiere agregar un observador que envíe correos o alertas a pantalla cuando se rechaza una muestra, se crea una subclase de `Observador` y se suscribe a `SujetoEventos` sin alterar la lógica de recepción.
 3. **L — Liskov Substitution Principle (Sustitución de Liskov):**
    * Cualquier instancia de `EstadoExtraida`, `EstadoEmpaquetada`, etc., puede sustituir a `EstadoMuestra` dentro de `MuestraBiologica` cumpliendo exactamente las precondiciones y postcondiciones de la interfaz abstracta. Lo mismo ocurre con todas las estrategias de `EstrategiaFacturacion` y todos los DAOs que heredan de `DAOBase`.
 4. **I — Interface Segregation Principle (Segregación de Interfaces):**
-   * En lugar de interfaces monolíticas o "clases Dios", las abstracciones son mínimas y cohesivas: `Observador` define un único método `actualizar()`; `EstrategiaFacturacion` define `nombre` y `liquidar()`; los iteradores implementan únicamente `__iter__()` y `__next__()`.
+   * En lugar de interfaces monolíticas o "clases Dios", las abstracciones son mínimas y cohesivas: `EstrategiaFacturacion` define `nombre` y `liquidar()`; los iteradores implementan únicamente `__iter__()` y `__next__()`.
 5. **D — Dependency Inversion Principle (Inversión de Dependencias):**
    * Los módulos de alto nivel no dependen de detalles de bajo nivel: `MuestraBiologica` depende de la abstracción `EstadoMuestra`; `DAOBase` permite **Inyección de Dependencias** en su constructor `def __init__(self, conexion: ConexionBD | None = None)`, lo que permite sustituir la base de datos física por una base en memoria (`:memory:`) durante las pruebas unitarias.
 

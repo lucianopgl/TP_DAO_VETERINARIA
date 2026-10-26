@@ -33,11 +33,10 @@ proyecto_veterinaria/
 │   │   ├── logistica.py        # Conservadoras, Precintos, Remitos y Envíos
 │   │   ├── facturacion.py      # Comprobantes, Detalle y Resultados de laboratorio
 │   │   └── excepciones.py      # Jerarquía de excepciones semánticas de negocio
-│   ├── patrones/               # [COMPLETO] 4 Patrones GoF implementados
+│   ├── patrones/               # [COMPLETO] Patrones GoF implementados
 │   │   ├── estado_muestra.py   # Patrón STATE: Extraída -> Empaquetada -> EnTránsito -> Recibida -> Analizada / Rechazada
-│   │   ├── estrategia_facturacion.py # Patrón STRATEGY: Tarifas (Plena, Obra Social, Urgencia)
-│   │   ├── iterador_muestras.py# Patrón ITERATOR: Recorrido de muestras en conservadora
-│   │   └── observador_eventos.py # Patrón OBSERVER: Notificaciones (muestra rechazada, resultados listos)
+│   │   ├── estrategia_facturacion.py # Patrón STRATEGY: Tarifas (Estándar, Convenio Red, Urgencia)
+│   │   └── iterador_muestras.py# Patrón ITERATOR: Recorrido de muestras en conservadora
 │   ├── persistencia/           # [COMPLETO] Capa DAO y motor relacional
 │   │   ├── esquema.sql         # DDL de 26 tablas STRICT, constraints nombrados, índices y triggers
 │   │   ├── conexion_bd.py      # SINGLETON: Gestión de conexión SQLite, transacciones atómicas
@@ -54,9 +53,9 @@ proyecto_veterinaria/
 │   │   └── (Requiere: orquestación de casos de uso 1 a 7, validación horaria de agenda y reportes)
 │   └── interfaz/               # [PENDIENTE] Solo contiene docstring en __init__.py
 │       └── (Requiere: formularios y pantallas CustomTkinter conectadas a servicios)
-└── tests/                      # [COMPLETO] Cobertura automatizada (52/52 tests pasados)
+└── tests/                      # [COMPLETO] Cobertura automatizada (57/57 tests pasados)
     ├── test_persistencia_base.py # Tests de conexión Singleton, constraints y triggers
-    ├── test_dominio_y_patrones.py # Tests de State, Strategy, Iterator, Observer y entidades
+    ├── test_dominio_y_patrones.py # Tests de State, Strategy, Iterator y entidades
     └── test_daos.py            # Tests de integración DAO contra SQLite en memoria
 ```
 
@@ -126,8 +125,72 @@ erDiagram
     COMPROBANTES ||--|{ DETALLES_COMPROBANTE : "desglosa"
 
     %% ==========================================
-    %% DEFINICIÓN DE ENTIDADES Y CAMPOS CLAVE
+    %% DEFINICIÓN DE ENTIDADES Y CAMPOS CLAVE (26 TABLAS)
     %% ==========================================
+    CATALOGO_ESPECIES {
+        int id PK
+        string nombre UK
+    }
+
+    CATALOGO_TIPOS_MUESTRA {
+        int id PK
+        string codigo UK
+        string nombre
+    }
+
+    CATALOGO_TIPOS_ESTUDIO {
+        int id PK
+        string codigo UK
+        string nombre
+        float costo_base
+    }
+
+    CATALOGO_VACUNAS {
+        int id PK
+        string nombre
+        int especie_id FK
+        int es_obligatoria
+        int frecuencia_refuerzo_meses
+    }
+
+    CLINICAS {
+        int id PK
+        string nombre UK
+        string direccion
+        string telefono
+    }
+
+    VETERINARIOS {
+        int id PK
+        string matricula UK
+        string nombre
+        string apellido
+        string especialidad
+    }
+
+    LABORATORIOS {
+        int id PK
+        string nombre UK
+        string direccion
+        string telefono
+    }
+
+    PROFESIONALES_LABORATORIO {
+        int id PK
+        string matricula UK
+        string nombre
+        string apellido
+        int laboratorio_id FK
+    }
+
+    TRANSPORTISTAS {
+        int id PK
+        string nombre
+        string cuit_dni UK
+        string vehiculo_patente
+        string telefono
+    }
+
     CLIENTES {
         int id PK
         string dni UK
@@ -166,6 +229,23 @@ erDiagram
         string motivo
         string diagnostico
         float costo_consulta
+    }
+
+    TRATAMIENTOS {
+        int id PK
+        int consulta_id FK
+        string descripcion
+        string medicamento
+        string dosis
+        int duracion_dias
+    }
+
+    VACUNAS_APLICADAS {
+        int id PK
+        int mascota_id FK
+        int vacuna_id FK
+        int consulta_id FK
+        string fecha_aplicacion
     }
 
     ORDENES_DERIVACION {
