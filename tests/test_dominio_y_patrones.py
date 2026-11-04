@@ -273,21 +273,26 @@ class PruebaValidacionesDominio(unittest.TestCase):
     def test_validaciones_unitarias_cliente(self):
         # DNI inválido
         with self.assertRaises(ErrorDatosInvalidos):
-            Cliente(None, "123", "Juan", "Pérez", "351-111")
+            Cliente(None, "123", "Juan", "Pérez", "3511112233")
         # Nombre vacío
         with self.assertRaises(ErrorDatosInvalidos):
-            Cliente(None, "30111222", "   ", "Pérez", "351-111")
+            Cliente(None, "30111222", "   ", "Pérez", "3511112233")
         # Apellido vacío
         with self.assertRaises(ErrorDatosInvalidos):
-            Cliente(None, "30111222", "Juan", "", "351-111")
+            Cliente(None, "30111222", "Juan", "", "3511112233")
         # Teléfono vacío
         with self.assertRaises(ErrorDatosInvalidos):
             Cliente(None, "30111222", "Juan", "Pérez", "")
+        # Teléfono con caracteres no numéricos (guiones o letras)
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "30111222", "Juan", "Pérez", "351-1112233")
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "30111222", "Juan", "Pérez", "351ABC1234")
         # Email con formato inválido
         with self.assertRaises(ErrorDatosInvalidos):
-            Cliente(None, "30111222", "Juan", "Pérez", "351-111", email="correo_invalido")
+            Cliente(None, "30111222", "Juan", "Pérez", "3511112233", email="correo_invalido")
 
-        c_ok = Cliente(1, "30111222", "Juan", "Pérez", "351-111", email="juan@mail.com")
+        c_ok = Cliente(1, "30111222", "Juan", "Pérez", "3511112233", email="juan@mail.com")
         self.assertEqual(c_ok.nombre_completo, "Pérez, Juan")
         self.assertIn("30111222", str(c_ok))
 

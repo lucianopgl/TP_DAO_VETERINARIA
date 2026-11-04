@@ -53,9 +53,15 @@ class Cliente:
             raise ErrorDatosInvalidos("apellido", "El apellido del cliente no puede estar vacío.")
         self.apellido = self.apellido.strip()
 
-        if not self.telefono or not self.telefono.strip():
+        telefono_limpio = self.telefono.strip() if self.telefono else ""
+        if not telefono_limpio:
             raise ErrorDatosInvalidos("telefono", "El teléfono de contacto es obligatorio.")
-        self.telefono = self.telefono.strip()
+        if not telefono_limpio.isdigit() or not (7 <= len(telefono_limpio) <= 15):
+            raise ErrorDatosInvalidos(
+                "telefono",
+                "El teléfono de contacto debe contener únicamente dígitos numéricos (entre 7 y 15 números).",
+            )
+        self.telefono = telefono_limpio
 
         if self.email:
             email_limpio = self.email.strip()

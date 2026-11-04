@@ -96,7 +96,7 @@ class PruebaMejorasAuditoria(unittest.TestCase):
     # ----------------------------------------------------------------------------------
 
     def test_obtener_y_actualizar_historia_clinica(self):
-        cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "351-1111111"))
+        cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "3511111111"))
         mid = self.mascota_dao.crear(Mascota(None, "Bobby", 1, 3, "Macho", cid))
 
         historia = self.mascota_dao.obtener_historia_clinica(mid)
@@ -116,7 +116,7 @@ class PruebaMejorasAuditoria(unittest.TestCase):
     # ----------------------------------------------------------------------------------
 
     def test_calculo_de_vacunas_pendientes_nunca_aplicada_y_vencida(self):
-        cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "351-1111111"))
+        cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "3511111111"))
         # Perro (especie 1: Canino tiene obligatorias Antirrábica [id 1] y Séxtuple [id 2])
         mid = self.mascota_dao.crear(Mascota(None, "Bobby", 1, 3, "Macho", cid))
 
@@ -147,7 +147,7 @@ class PruebaMejorasAuditoria(unittest.TestCase):
 
     def test_consulta_de_muestras_rechazadas_con_transporte(self):
         # Armar circuito
-        cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "351-1111111"))
+        cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "3511111111"))
         mid = self.mascota_dao.crear(Mascota(None, "Bobby", 1, 3, "Macho", cid))
         cons_id = self.consulta_dao.crear(
             ConsultaMedica(None, mid, 1, 1, "2026-10-19 10:00:00", motivo="Extracción")
@@ -194,7 +194,7 @@ class PruebaMejorasAuditoria(unittest.TestCase):
     def test_actualizar_sin_id_lanza_error_veterinaria_y_consistencia_historial_muestra(self):
         from src.dominio.excepciones import ErrorDatosInvalidos, ErrorVeterinaria
 
-        cliente_sin_id = Cliente(None, "30111222", "Juan", "Pérez", "351-1111111")
+        cliente_sin_id = Cliente(None, "30111222", "Juan", "Pérez", "3511111111")
         with self.assertRaises(ErrorDatosInvalidos) as ctx_cli:
             self.cliente_dao.actualizar(cliente_sin_id)
         self.assertIsInstance(ctx_cli.exception, ErrorVeterinaria)

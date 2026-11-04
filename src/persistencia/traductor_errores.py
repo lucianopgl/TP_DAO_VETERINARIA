@@ -34,6 +34,8 @@ MENSAJES_POR_RESTRICCION: dict[str, str] = {
     "clinicas.nombre": "Ya existe una clínica con ese nombre.",
     "laboratorios.nombre": "Ya existe un laboratorio con ese nombre.",
     "historias_clinicas.mascota_id": "La mascota ya posee una historia clínica.",
+    "vacunas_aplicadas.mascota_id, vacunas_aplicadas.vacuna_id, vacunas_aplicadas.fecha_aplicacion":
+        "Esta vacuna ya fue registrada para la mascota en esa misma fecha de aplicación.",
     "consultas_medicas.veterinario_id, consultas_medicas.fecha_hora_inicio":
         "El veterinario ya tiene una consulta que comienza en ese mismo horario.",
     "conservadoras.codigo": "Ya existe una conservadora con ese código.",
@@ -52,6 +54,7 @@ MENSAJES_POR_RESTRICCION: dict[str, str] = {
     "ck_clientes_dni": "El DNI debe contener solo números (7 u 8 dígitos).",
     "ck_clientes_nombre": "El nombre del cliente es obligatorio.",
     "ck_clientes_apellido": "El apellido del cliente es obligatorio.",
+    "ck_clientes_telefono": "El teléfono de contacto debe contener únicamente dígitos numéricos (entre 7 y 15 números).",
     "ck_clientes_email": "El correo electrónico no tiene un formato válido.",
     "ck_mascotas_nombre": "El nombre de la mascota es obligatorio.",
     "ck_mascotas_edad": "La edad de la mascota no puede ser negativa.",

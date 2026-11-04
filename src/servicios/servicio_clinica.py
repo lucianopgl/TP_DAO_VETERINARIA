@@ -28,6 +28,7 @@ from src.dominio.excepciones import (
     ErrorMascotaSinResponsable,
     ErrorSuperposicionTurno,
     ErrorVacunaObligatoriaFaltante,
+    ErrorValidacionNegocio,
 )
 from src.dominio.historia_clinica import HistoriaClinica, Tratamiento, VacunaAplicada
 from src.dominio.mascota import Mascota
@@ -231,11 +232,22 @@ class ServicioClinica:
         fecha_aplicacion: str | None = None,
         consulta_id: int | None = None,
     ) -> VacunaAplicada:
-        """Registra una dosis de vacuna aplicada a la mascota."""
+        """
+        Registra una dosis de vacuna aplicada a la mascota, verificando que no se
+        duplique la misma vacuna en la misma fecha de aplicación.
+        """
         if self.mascota_dao.obtener_por_id(mascota_id) is None:
             raise ErrorEntidadNoEncontrada("Mascota", mascota_id)
 
-        fecha = fecha_aplicacion or datetime.now().strftime("%Y-%m-%d")
+        fecha = (fecha_aplicacion or datetime.now().strftime("%Y-%m-%d")).strip()
+        existentes = self.mascota_dao.listar_vacunas_de_mascota(mascota_id)
+        for v_existente in existentes:
+            if v_existente.vacuna_id == vacuna_id and v_existente.fecha_aplicacion == fecha:
+                raise ErrorValidacionNegocio(
+                    f"La vacuna '{v_existente.nombre_vacuna or vacuna_id}' ya fue aplicada a esta "
+                    f"mascota en la fecha {fecha}. No se puede aplicar dos veces el mismo día."
+                )
+
         vacuna = VacunaAplicada(
             id=None,
             mascota_id=mascota_id,
@@ -395,6 +407,14 @@ class ServicioClinica:
     def listar_consultas_por_mascota(self, mascota_id: int) -> list[ConsultaMedica]:
         """Lista todas las consultas médicas de un paciente."""
         return self.consulta_dao.listar_por_mascota(mascota_id)
+
+    def listar_consultas(self) -> list[ConsultaMedica]:
+        """Lista todas las consultas médicas registradas en la red."""
+        return self.consulta_dao.listar_todas()
+
+    def listar_muestras_por_orden(self, orden_id: int) -> list[MuestraBiologica]:
+        """Lista todas las muestras biológicas extraídas para una orden de derivación."""
+        return self.muestra_dao.listar_por_orden(orden_id)
 
     def emitir_orden_derivacion(
         self,

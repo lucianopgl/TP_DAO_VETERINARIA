@@ -53,7 +53,7 @@ class PruebaDAOsBase(unittest.TestCase):
             dni="32444555",
             nombre="Carlos",
             apellido="Gómez",
-            telefono="351-4445566",
+            telefono="3514445566",
             email="carlos@ejemplo.com",
             direccion="Barrio Alberdi",
         )
@@ -75,7 +75,7 @@ class PruebaClienteDAO(PruebaDAOsBase):
     """Pruebas para ClienteDAO."""
 
     def test_crear_obtener_y_actualizar_cliente(self):
-        cliente = Cliente(None, "28999111", "Marta", "Suárez", "351-9988776", "marta@mail.com")
+        cliente = Cliente(None, "28999111", "Marta", "Suárez", "3519988776", "marta@mail.com")
         cid = self.cliente_dao.crear(cliente)
         self.assertIsNotNone(cid)
 
@@ -85,15 +85,15 @@ class PruebaClienteDAO(PruebaDAOsBase):
         self.assertEqual(recuperado.apellido, "Suárez")
 
         # Actualizar
-        recuperado.telefono = "351-1112233"
+        recuperado.telefono = "3511112233"
         self.cliente_dao.actualizar(recuperado)
         actualizado = self.cliente_dao.obtener_por_dni("28999111")
-        self.assertEqual(actualizado.telefono, "351-1112233")
+        self.assertEqual(actualizado.telefono, "3511112233")
 
     def test_dni_duplicado_lanza_error_integridad(self):
-        c1 = Cliente(None, "28999111", "Marta", "Suárez", "351-1")
+        c1 = Cliente(None, "28999111", "Marta", "Suárez", "3511111111")
         self.cliente_dao.crear(c1)
-        c2 = Cliente(None, "28999111", "Otra", "Persona", "351-2")
+        c2 = Cliente(None, "28999111", "Otra", "Persona", "3512222222")
         with self.assertRaises(ErrorIntegridadDatos) as ctx:
             self.cliente_dao.crear(c2)
         self.assertIn("DNI", ctx.exception.mensaje)

@@ -60,7 +60,7 @@ class PruebaServicioReportes(unittest.TestCase):
             dni="31222333",
             nombre="Laura",
             apellido="Méndez",
-            telefono="351-5551122",
+            telefono="3515551122",
             email="laura@mail.com",
         )
         # Mascota 1: Canino (requiere Antirrábica [1] y Séxtuple [2])

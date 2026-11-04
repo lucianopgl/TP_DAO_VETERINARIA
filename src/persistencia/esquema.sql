@@ -123,6 +123,8 @@ CREATE TABLE IF NOT EXISTS clientes (
                                       AND length(dni) BETWEEN 7 AND 8),
     CONSTRAINT ck_clientes_nombre CHECK (length(trim(nombre)) > 0),
     CONSTRAINT ck_clientes_apellido CHECK (length(trim(apellido)) > 0),
+    CONSTRAINT ck_clientes_telefono CHECK (telefono NOT GLOB '*[^0-9]*'
+                                           AND length(telefono) BETWEEN 7 AND 15),
     CONSTRAINT ck_clientes_email CHECK (email IS NULL OR email LIKE '%_@_%._%')
 ) STRICT;
 
@@ -196,6 +198,7 @@ CREATE TABLE IF NOT EXISTS vacunas_aplicadas (
     -- (por ejemplo, una vacuna aplicada en otra veterinaria).
     consulta_id       INTEGER REFERENCES consultas_medicas(id),
     fecha_aplicacion  TEXT    NOT NULL,
+    CONSTRAINT uq_vacunas_aplicadas_mascota_fecha UNIQUE (mascota_id, vacuna_id, fecha_aplicacion),
     CONSTRAINT ck_vacunas_aplicadas_fecha_aplicacion_formato
         CHECK (fecha_aplicacion IS date(fecha_aplicacion))
 ) STRICT;

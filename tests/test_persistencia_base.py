@@ -56,7 +56,7 @@ class PruebaBaseConBD(unittest.TestCase):
         with self.conexion.transaccion() as cursor:
             cursor.execute(
                 SQL_INSERTAR_CLIENTE,
-                (dni, "Ana", "López", "351-1234567", "ana@correo.com", "Calle 1"),
+                (dni, "Ana", "López", "3511234567", "ana@correo.com", "Calle 1"),
             )
             return cursor.lastrowid
 
@@ -129,7 +129,7 @@ class PruebaTransacciones(PruebaBaseConBD):
             with self.conexion.transaccion() as cursor:
                 cursor.execute(
                     SQL_INSERTAR_CLIENTE,
-                    ("30111222", "Ana", "López", "351-1234567", None, None),
+                    ("30111222", "Ana", "López", "3511234567", None, None),
                 )
                 raise ValueError("Falla simulada a mitad de la operación")
         self.assertEqual(self.contar("clientes"), 0)
@@ -139,9 +139,9 @@ class PruebaTransacciones(PruebaBaseConBD):
         with self.assertRaises(ErrorIntegridadDatos):
             with self.conexion.transaccion() as cursor:
                 cursor.execute(SQL_INSERTAR_CLIENTE,
-                               ("30111222", "Ana", "López", "351-1", None, None))
+                               ("30111222", "Ana", "López", "3511111111", None, None))
                 cursor.execute(SQL_INSERTAR_CLIENTE,
-                               ("30111222", "Juan", "Pérez", "351-2", None, None))
+                               ("30111222", "Juan", "Pérez", "3512222222", None, None))
         self.assertEqual(self.contar("clientes"), 0)
 
     def test_transaccion_anidada_solo_confirma_la_externa(self):
@@ -185,14 +185,14 @@ class PruebaRestricciones(PruebaBaseConBD):
         self.insertar_cliente("30111222")
         self.assert_error_integridad(
             SQL_INSERTAR_CLIENTE,
-            ("30111222", "Juan", "Pérez", "351-2", None, None),
+            ("30111222", "Juan", "Pérez", "3512222222", None, None),
             "Ya existe un cliente registrado con el DNI ingresado.",
         )
 
     def test_dni_con_letras(self):
         self.assert_error_integridad(
             SQL_INSERTAR_CLIENTE,
-            ("30A11222", "Juan", "Pérez", "351-2", None, None),
+            ("30A11222", "Juan", "Pérez", "3512222222", None, None),
             "El DNI debe contener solo números (7 u 8 dígitos).",
         )
 

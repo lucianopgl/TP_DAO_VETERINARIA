@@ -57,7 +57,7 @@ class PruebaServiciosNegocio(unittest.TestCase):
             dni="35123456",
             nombre="Luciano",
             apellido="Paglino",
-            telefono="351-5551234",
+            telefono="3515551234",
             email="luciano@ejemplo.com",
             direccion="Córdoba Capital",
         )
@@ -153,6 +153,15 @@ class PruebaServiciosNegocio(unittest.TestCase):
         historia = self.srv_clinica.obtener_historia_clinica_completa(mascota.id)
         self.assertEqual(len(historia.vacunas), 2)
         self.assertEqual(len(historia.tratamientos), 1)
+
+        # Intentar volver a aplicar la misma vacuna en la misma fecha lanza ErrorValidacionNegocio
+        from src.dominio.excepciones import ErrorValidacionNegocio
+        with self.assertRaises(ErrorValidacionNegocio):
+            self.srv_clinica.aplicar_vacuna(
+                mascota_id=mascota.id,
+                vacuna_id=1,
+                fecha_aplicacion="2026-10-19",
+            )
 
     # ----------------------------------------------------------------------------------
     # Procesos 4, 5, 6 y 7: Circuito Completo Exitoso

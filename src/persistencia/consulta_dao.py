@@ -112,6 +112,17 @@ class ConsultaDAO(DAOBase):
         filas = self.conexion.consultar_todos(sql, (mascota_id,))
         return [self._mapear_fila(f) for f in filas]
 
+    def listar_todas(self) -> list[ConsultaMedica]:
+        """Recupera todas las consultas médicas registradas en la red ordenadas por fecha."""
+        sql = """
+            SELECT id, mascota_id, clinica_id, veterinario_id, fecha_hora_inicio,
+                   duracion_minutos, motivo, diagnostico, costo_consulta
+            FROM consultas_medicas
+            ORDER BY fecha_hora_inicio DESC
+        """
+        filas = self.conexion.consultar_todos(sql)
+        return [self._mapear_fila(f) for f in filas]
+
     # ----------------------------------------------------------------------------------
     # Tratamientos
     # ----------------------------------------------------------------------------------
