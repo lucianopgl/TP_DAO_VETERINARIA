@@ -10,7 +10,11 @@ de forma estrictamente ATÓMICA junto con el registro inmutable en `historial_es
 from __future__ import annotations
 
 import sqlite3
-from src.dominio.muestra_biologica import MuestraBiologica, RegistroTrazabilidad
+from src.dominio.muestra_biologica import (
+    OBSERVACION_EXTRACCION_INICIAL,
+    MuestraBiologica,
+    RegistroTrazabilidad,
+)
 from src.persistencia.dao_base import DAOBase
 
 
@@ -22,6 +26,12 @@ class MuestraDAO(DAOBase):
         Inserta la muestra biológica y su primer evento inmutable de extracción
         dentro de una única transacción atómica.
         """
+        muestra.validar()
+        observacion_inicial = (
+            muestra.historial[0].observacion
+            if muestra.historial
+            else OBSERVACION_EXTRACCION_INICIAL
+        )
         sql_muestra = """
             INSERT INTO muestras_biologicas (
                 codigo_muestra, orden_id, tipo_muestra_id, fecha_hora_extraccion,
@@ -52,8 +62,18 @@ class MuestraDAO(DAOBase):
                 None,
                 muestra.estado_actual,
                 muestra.fecha_hora_extraccion,
-                "Extracción de muestra biológica.",
+                observacion_inicial,
             ))
+            historial_id = cursor.lastrowid
+            if muestra._historial:
+                muestra._historial[0] = RegistroTrazabilidad(
+                    id=historial_id,
+                    muestra_id=muestra_id,
+                    estado_anterior=None,
+                    estado_nuevo=muestra.estado_actual,
+                    fecha_hora=muestra.fecha_hora_extraccion,
+                    observacion=observacion_inicial,
+                )
             return muestra_id
 
     def actualizar_estado(
@@ -141,7 +161,7 @@ class MuestraDAO(DAOBase):
             ORDER BY mb.id
         """
         filas = self.conexion.consultar_todos(sql, (orden_id,))
-        return [self._mapear_fila(f, self.obtener_historial(f["id"])) for f in filas]
+        return self._mapear_filas_con_historiales(filas)
 
     def listar_por_remito(self, remito_id: int) -> list[MuestraBiologica]:
         """Obtiene todas las muestras empaquetadas en un remito biológico."""
@@ -155,7 +175,7 @@ class MuestraDAO(DAOBase):
             ORDER BY mb.id
         """
         filas = self.conexion.consultar_todos(sql, (remito_id,))
-        return [self._mapear_fila(f, self.obtener_historial(f["id"])) for f in filas]
+        return self._mapear_filas_con_historiales(filas)
 
     def listar_por_estado(self, estado: str) -> list[MuestraBiologica]:
         """Obtiene muestras que se encuentren actualmente en un estado determinado."""
@@ -169,7 +189,52 @@ class MuestraDAO(DAOBase):
             ORDER BY mb.id DESC
         """
         filas = self.conexion.consultar_todos(sql, (estado,))
-        return [self._mapear_fila(f, self.obtener_historial(f["id"])) for f in filas]
+        return self._mapear_filas_con_historiales(filas)
+
+    def listar_extraidas_por_clinica(self, clinica_id: int | None = None) -> list[MuestraBiologica]:
+        """
+        Lista las muestras en estado 'Extraida' pendientes de empaquetar.
+        Si se especifica `clinica_id`, filtra directamente en SQL mediante JOIN
+        (evita consultas N+1 desde la capa de servicios).
+        """
+        if clinica_id is None:
+            return self.listar_por_estado("Extraida")
+
+        sql = """
+            SELECT mb.id, mb.codigo_muestra, mb.orden_id, mb.tipo_muestra_id,
+                   mb.fecha_hora_extraccion, mb.remito_id, mb.estado_actual,
+                   mb.motivo_rechazo, ctm.nombre AS nombre_tipo_muestra
+            FROM muestras_biologicas mb
+            JOIN catalogo_tipos_muestra ctm ON mb.tipo_muestra_id = ctm.id
+            JOIN ordenes_derivacion od ON mb.orden_id = od.id
+            JOIN consultas_medicas cm ON od.consulta_id = cm.id
+            WHERE mb.estado_actual = 'Extraida' AND cm.clinica_id = ?
+            ORDER BY mb.id DESC
+        """
+        filas = self.conexion.consultar_todos(sql, (clinica_id,))
+        return self._mapear_filas_con_historiales(filas)
+
+    def obtener_clinica_origen(self, muestra_id: int) -> int | None:
+        """
+        Obtiene el ID de la clínica en la que se extrajo la muestra siguiendo la
+        relación relacional: Muestra -> OrdenDerivacion -> ConsultaMedica -> Clinica.
+        """
+        sql = """
+            SELECT cm.clinica_id
+            FROM muestras_biologicas mb
+            JOIN ordenes_derivacion od ON mb.orden_id = od.id
+            JOIN consultas_medicas cm ON od.consulta_id = cm.id
+            WHERE mb.id = ?
+        """
+        fila = self.conexion.consultar_uno(sql, (muestra_id,))
+        return int(fila["clinica_id"]) if fila else None
+
+    def listar_tipos_muestra(self) -> list[dict]:
+        """Devuelve el catálogo paramétrico de tipos de muestra biológica."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, codigo, nombre FROM catalogo_tipos_muestra ORDER BY nombre"
+        )
+        return [dict(f) for f in filas]
 
     def obtener_historial(self, muestra_id: int) -> list[RegistroTrazabilidad]:
         """Recupera la cadena completa e inmutable de eventos de la muestra."""
@@ -191,6 +256,37 @@ class MuestraDAO(DAOBase):
             )
             for f in filas
         ]
+
+    def _mapear_filas_con_historiales(self, filas: list[sqlite3.Row]) -> list[MuestraBiologica]:
+        """
+        Hidrata un lote de muestras cargando todos sus historiales en una única
+        consulta SQL con `IN (...)`, eliminando el problema de consultas N+1.
+        """
+        if not filas:
+            return []
+
+        ids = [int(f["id"]) for f in filas]
+        marcadores = ", ".join("?" for _ in ids)
+        sql_hist = f"""
+            SELECT id, muestra_id, estado_anterior, estado_nuevo, fecha_hora, observacion
+            FROM historial_estados_muestra
+            WHERE muestra_id IN ({marcadores})
+            ORDER BY id ASC
+        """
+        filas_hist = self.conexion.consultar_todos(sql_hist, tuple(ids))
+        historiales_por_muestra: dict[int, list[RegistroTrazabilidad]] = {mid: [] for mid in ids}
+        for fh in filas_hist:
+            historiales_por_muestra[int(fh["muestra_id"])].append(
+                RegistroTrazabilidad(
+                    id=fh["id"],
+                    muestra_id=fh["muestra_id"],
+                    estado_anterior=fh["estado_anterior"],
+                    estado_nuevo=fh["estado_nuevo"],
+                    fecha_hora=fh["fecha_hora"],
+                    observacion=fh["observacion"],
+                )
+            )
+        return [self._mapear_fila(f, historiales_por_muestra.get(int(f["id"]), [])) for f in filas]
 
     def listar_muestras_rechazadas_con_transporte(self) -> list[dict]:
         """

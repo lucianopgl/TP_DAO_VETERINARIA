@@ -13,8 +13,8 @@ Implementa las operaciones de persistencia (ABMC) para la entidad Cliente:
 from __future__ import annotations
 
 import sqlite3
-from typing import Any
 from src.dominio.cliente import Cliente
+from src.dominio.excepciones import ErrorDatosInvalidos
 from src.persistencia.dao_base import DAOBase
 
 
@@ -49,7 +49,7 @@ class ClienteDAO(DAOBase):
     def actualizar(self, cliente: Cliente) -> None:
         """Actualiza los datos personales y de contacto de un cliente existente."""
         if cliente.id is None:
-            raise ValueError("No se puede actualizar un cliente sin ID.")
+            raise ErrorDatosInvalidos("id", "No se puede actualizar un cliente sin ID.")
         cliente.validar()
         sql = """
             UPDATE clientes

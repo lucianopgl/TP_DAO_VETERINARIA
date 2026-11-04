@@ -11,6 +11,15 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from src.dominio.excepciones import ErrorDatosInvalidos
 
+TIPOS_CONCEPTO_VALIDOS: tuple[str, ...] = (
+    "Consulta",
+    "Laboratorio",
+    "Vacuna",
+    "Tratamiento",
+    "Recargo",
+    "Bonificacion",
+)
+
 
 @dataclass
 class ResultadoAnalisis:
@@ -37,10 +46,18 @@ class ResultadoAnalisis:
     bioquimico_nombre: str = ""
 
     def __post_init__(self) -> None:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida los campos del informe bioquímico."""
         if not self.valores_medidos or not self.valores_medidos.strip():
             raise ErrorDatosInvalidos("valores_medidos", "Los valores medidos del análisis no pueden estar vacíos.")
+        self.valores_medidos = self.valores_medidos.strip()
+
         if not self.conclusion or not self.conclusion.strip():
             raise ErrorDatosInvalidos("conclusion", "La conclusión médica del análisis es obligatoria.")
+        self.conclusion = self.conclusion.strip()
+
         if self.costo_analisis < 0:
             raise ErrorDatosInvalidos("costo_analisis", "El costo del análisis no puede ser negativo.")
 
@@ -64,11 +81,15 @@ class DetalleComprobante:
     monto: float
 
     def __post_init__(self) -> None:
-        tipos_validos = ("Consulta", "Laboratorio", "Vacuna", "Tratamiento", "Recargo", "Bonificacion")
-        if self.tipo_concepto not in tipos_validos:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida el tipo de concepto y la descripción del ítem facturado."""
+        if self.tipo_concepto not in TIPOS_CONCEPTO_VALIDOS:
             raise ErrorDatosInvalidos("tipo_concepto", f"Tipo de concepto '{self.tipo_concepto}' no válido.")
         if not self.concepto or not self.concepto.strip():
             raise ErrorDatosInvalidos("concepto", "El concepto del ítem no puede estar vacío.")
+        self.concepto = self.concepto.strip()
 
 
 @dataclass
@@ -94,7 +115,12 @@ class ComprobanteAtencion:
     detalles: list[DetalleComprobante] = field(default_factory=list)
 
     def __post_init__(self) -> None:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida la cabecera del comprobante de atención."""
         if not self.numero_comprobante or not self.numero_comprobante.strip():
             raise ErrorDatosInvalidos("numero_comprobante", "El número de comprobante es obligatorio.")
+        self.numero_comprobante = self.numero_comprobante.strip()
         if self.monto_total < 0:
             raise ErrorDatosInvalidos("monto_total", "El monto total no puede ser negativo.")

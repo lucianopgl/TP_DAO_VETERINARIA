@@ -48,6 +48,7 @@ class ConsultaDAO(DAOBase):
             consulta.id = consulta_id
 
             for t in consulta.tratamientos:
+                t.validar()
                 cursor.execute(sql_tratamiento, (
                     consulta_id,
                     t.descripcion,
@@ -135,12 +136,38 @@ class ConsultaDAO(DAOBase):
             for f in filas
         ]
 
+    def listar_tratamientos_por_mascota(self, mascota_id: int) -> list[Tratamiento]:
+        """
+        Recupera todos los tratamientos históricos de una mascota en una sola consulta SQL
+        (evita el antipatrón de consultas N+1 por cada consulta médica).
+        """
+        sql = """
+            SELECT t.id, t.consulta_id, t.descripcion, t.medicamento, t.dosis, t.duracion_dias
+            FROM tratamientos t
+            JOIN consultas_medicas cm ON cm.id = t.consulta_id
+            WHERE cm.mascota_id = ?
+            ORDER BY cm.fecha_hora_inicio DESC, t.id ASC
+        """
+        filas = self.conexion.consultar_todos(sql, (mascota_id,))
+        return [
+            Tratamiento(
+                id=f["id"],
+                consulta_id=f["consulta_id"],
+                descripcion=f["descripcion"],
+                medicamento=f["medicamento"],
+                dosis=f["dosis"],
+                duracion_dias=f["duracion_dias"],
+            )
+            for f in filas
+        ]
+
     # ----------------------------------------------------------------------------------
     # Órdenes de Derivación
     # ----------------------------------------------------------------------------------
 
     def crear_orden_derivacion(self, orden: OrdenDerivacion) -> int:
         """Inserta una nueva orden de derivación a laboratorio."""
+        orden.validar()
         sql = """
             INSERT INTO ordenes_derivacion (
                 consulta_id, tipo_estudio_id, indicaciones, prioridad, fecha_hora_emision
@@ -207,6 +234,32 @@ class ConsultaDAO(DAOBase):
             )
             for f in filas
         ]
+
+    # ----------------------------------------------------------------------------------
+    # Catálogos y Entidades de la Red Clínica
+    # ----------------------------------------------------------------------------------
+
+    def listar_clinicas(self) -> list[dict]:
+        """Devuelve las clínicas veterinarias de la red."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, nombre, direccion, telefono FROM clinicas ORDER BY nombre"
+        )
+        return [dict(f) for f in filas]
+
+    def listar_veterinarios(self) -> list[dict]:
+        """Devuelve el plantel de profesionales veterinarios."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, matricula, nombre, apellido, especialidad "
+            "FROM veterinarios ORDER BY apellido, nombre"
+        )
+        return [dict(f) for f in filas]
+
+    def listar_tipos_estudio(self) -> list[dict]:
+        """Devuelve el catálogo de estudios de laboratorio disponibles."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, codigo, nombre, costo_base FROM catalogo_tipos_estudio ORDER BY nombre"
+        )
+        return [dict(f) for f in filas]
 
     @staticmethod
     def _mapear_fila(fila: sqlite3.Row) -> ConsultaMedica:

@@ -187,6 +187,41 @@ class PruebaMejorasAuditoria(unittest.TestCase):
         self.assertIsNotNone(item["transportista_nombre"])
         self.assertIn("Clínica Veterinaria Centro", item["clinica_origen"])
 
+    # ----------------------------------------------------------------------------------
+    # 5. Clean Code y Consistencia POO (Excepciones de Dominio y Fuente Única de Verdad)
+    # ----------------------------------------------------------------------------------
+
+    def test_actualizar_sin_id_lanza_error_veterinaria_y_consistencia_historial_muestra(self):
+        from src.dominio.excepciones import ErrorDatosInvalidos, ErrorVeterinaria
+
+        cliente_sin_id = Cliente(None, "30111222", "Juan", "Pérez", "351-1111111")
+        with self.assertRaises(ErrorDatosInvalidos) as ctx_cli:
+            self.cliente_dao.actualizar(cliente_sin_id)
+        self.assertIsInstance(ctx_cli.exception, ErrorVeterinaria)
+
+        mascota_sin_id = Mascota(None, "Bobby", 1, 3, "Macho", 1)
+        with self.assertRaises(ErrorDatosInvalidos) as ctx_masc:
+            self.mascota_dao.actualizar(mascota_sin_id)
+        self.assertIsInstance(ctx_masc.exception, ErrorVeterinaria)
+
+        # Verificar consistencia de observación e ID en historial inicial de MuestraBiologica
+        cid = self.cliente_dao.crear(cliente_sin_id)
+        mascota_sin_id.cliente_id = cid
+        mid = self.mascota_dao.crear(mascota_sin_id)
+        cons_id = self.consulta_dao.crear(
+            ConsultaMedica(None, mid, 1, 1, "2026-10-19 10:00:00", motivo="Control")
+        )
+        oid = self.consulta_dao.crear_orden_derivacion(
+            OrdenDerivacion(None, cons_id, 1, fecha_hora_emision="2026-10-19 10:15:00")
+        )
+        muestra = MuestraBiologica(None, "MUE-CONSIST-01", oid, 1, "2026-10-19 10:20:00")
+        obs_en_memoria = muestra.historial[0].observacion
+        muestra_id = self.muestra_dao.crear(muestra)
+
+        recuperada = self.muestra_dao.obtener_por_id(muestra_id)
+        self.assertEqual(muestra.historial[0].muestra_id, muestra_id)
+        self.assertEqual(obs_en_memoria, recuperada.historial[0].observacion)
+
 
 if __name__ == "__main__":
     unittest.main()

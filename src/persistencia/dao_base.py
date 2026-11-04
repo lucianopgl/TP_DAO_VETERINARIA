@@ -14,11 +14,7 @@ utilidad para la ejecución de consultas y transacciones atómicas.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from src.persistencia.conexion_bd import ConexionBD
-
-if TYPE_CHECKING:
-    import sqlite3
 
 
 class DAOBase:
@@ -35,8 +31,3 @@ class DAOBase:
         o utilizar la instancia Singleton global por defecto.
         """
         self.conexion = conexion or ConexionBD.obtener_instancia()
-
-    @property
-    def cursor_transaccional(self):
-        """Atajo al context manager transaccional de la conexión."""
-        return self.conexion.transaccion()

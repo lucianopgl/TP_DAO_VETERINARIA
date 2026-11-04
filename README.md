@@ -8,7 +8,18 @@
 Sistema integral orientado a objetos con persistencia relacional para la administración de una red de clínicas veterinarias, atención clínica de pacientes y gestión logística con cadena de frío, custodia sanitaria y trazabilidad inmutable para la derivación de muestras biológicas hacia un laboratorio central de análisis.
 
 > **Proyecto Integrador de Cátedra:** Desarrollo de Aplicaciones con Objetos (DAO) — Ingeniería en Sistemas de Información (UTN FRC — Ciclo Lectivo 2026).  
-> **Tema:** Tema 2 — Veterinaria: Red de Clínicas y Derivación de Laboratorio.
+> **Tema:** Tema 2 — Veterinaria: Red de Clínicas y Derivación de Laboratorio.  
+> **Grupo:** Grupo 089 (G-089)
+
+### 👥 Integrantes del Grupo 089
+
+| Legajo | Nombre y Apellido |
+| :---: | :--- |
+| **85656** | Bertoni Rocio |
+| **90074** | Simonetti Franco |
+| **90175** | Ojea Nicolas |
+| **94030** | Diaz Tomás Agustín |
+| **95738** | Paglino Luciano Ivo |
 
 ---
 

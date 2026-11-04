@@ -142,21 +142,19 @@ class EstadoEnTransito(EstadoMuestra):
         Transición legal: EnTransito -> Recibida (si precinto intacto)
                           EnTransito -> Rechazada (si precinto roto o violado)
         """
-        estado_limpio = estado_precinto.strip().capitalize()
-        
+        from src.dominio.logistica import PrecintoSanitario
+
+        estado_limpio = PrecintoSanitario.normalizar_estado(estado_precinto)
+
         if estado_limpio == "Intacto":
             detalle_obs = f"Recepción conforme. Precinto sanitario verificado intacto. {observacion}".strip()
             muestra.cambiar_estado(EstadoRecibida(), fecha_hora=fecha_hora, observacion=detalle_obs)
-        elif estado_limpio in ("Roto", "Violado"):
+        else:
             motivo = f"Precinto sanitario {estado_limpio.lower()} en recepción. Cadena de custodia vulnerada."
             if observacion:
                 motivo = f"{motivo} Obs: {observacion}"
             muestra.motivo_rechazo = motivo
             muestra.cambiar_estado(EstadoRechazada(), fecha_hora=fecha_hora, observacion=motivo)
-        else:
-            raise ErrorValidacionNegocio(
-                f"Estado de precinto desconocido '{estado_precinto}'. Debe ser 'Intacto', 'Roto' o 'Violado'."
-            )
 
 
 class EstadoRecibida(EstadoMuestra):

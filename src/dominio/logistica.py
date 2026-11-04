@@ -15,10 +15,19 @@ from src.dominio.excepciones import (
     ErrorValidacionNegocio,
 )
 from src.patrones.iterador_muestras import IteradorMuestras, IteradorMuestrasFiltradas
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.dominio.muestra_biologica import MuestraBiologica
+
+ESTADOS_PRECINTO_VALIDOS: tuple[str, ...] = ("Intacto", "Roto", "Violado")
+ESTADOS_REMITO_VALIDOS: tuple[str, ...] = (
+    "EnPreparacion",
+    "Precintado",
+    "EnTransito",
+    "Recibido",
+    "Rechazado",
+)
 
 
 @dataclass
@@ -36,16 +45,35 @@ class PrecintoSanitario:
     estado: str = "Intacto"
 
     def __post_init__(self) -> None:
+        self.validar()
+
+    @staticmethod
+    def normalizar_estado(estado: str, como_dato_formulario: bool = False) -> str:
+        """
+        Normaliza y valida que el estado físico del precinto sea uno de los permitidos
+        ('Intacto', 'Roto' o 'Violado'). Única fuente de verdad para todo el sistema.
+        """
+        estado_limpio = estado.strip().capitalize() if estado else ""
+        if estado_limpio not in ESTADOS_PRECINTO_VALIDOS:
+            if como_dato_formulario:
+                raise ErrorDatosInvalidos(
+                    "estado",
+                    "El estado del precinto debe ser 'Intacto', 'Roto' o 'Violado'.",
+                )
+            raise ErrorValidacionNegocio(
+                f"Estado de precinto desconocido '{estado}'. Debe ser 'Intacto', 'Roto' o 'Violado'."
+            )
+        return estado_limpio
+
+    def validar(self) -> None:
+        """Valida número de serie y estado del precinto."""
         if not self.numero_serie or not self.numero_serie.strip():
             raise ErrorDatosInvalidos("numero_serie", "El número de serie del precinto es obligatorio.")
         self.numero_serie = self.numero_serie.strip().upper()
         self.validar_estado()
 
     def validar_estado(self) -> None:
-        estado_limpio = self.estado.strip().capitalize() if self.estado else ""
-        if estado_limpio not in ("Intacto", "Roto", "Violado"):
-            raise ErrorDatosInvalidos("estado", "El estado del precinto debe ser 'Intacto', 'Roto' o 'Violado'.")
-        self.estado = estado_limpio
+        self.estado = self.normalizar_estado(self.estado, como_dato_formulario=True)
 
     @property
     def esta_intacto(self) -> bool:
@@ -67,20 +95,31 @@ class ConservadoraIsotermica:
         temperatura_max: float | None = None,
         disponible: bool = True,
     ) -> None:
-        if not codigo or not codigo.strip():
-            raise ErrorDatosInvalidos("codigo", "El código de la conservadora es obligatorio.")
-        if capacidad_maxima <= 0:
-            raise ErrorDatosInvalidos("capacidad_maxima", "La capacidad de la conservadora debe ser mayor a 0.")
-        if temperatura_min is not None and temperatura_max is not None and temperatura_min > temperatura_max:
-            raise ErrorDatosInvalidos("temperatura", "La temperatura mínima no puede ser mayor que la máxima.")
-
         self.id = id
-        self.codigo = codigo.strip().upper()
-        self.capacidad_maxima = int(capacidad_maxima)
+        self.codigo = codigo
+        self.capacidad_maxima = capacidad_maxima
         self.temperatura_min = float(temperatura_min) if temperatura_min is not None else None
         self.temperatura_max = float(temperatura_max) if temperatura_max is not None else None
         self.disponible = bool(disponible)
         self._muestras: list[MuestraBiologica] = []
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida las reglas físicas y de formato de la conservadora isotérmica."""
+        if not self.codigo or not str(self.codigo).strip():
+            raise ErrorDatosInvalidos("codigo", "El código de la conservadora es obligatorio.")
+        self.codigo = str(self.codigo).strip().upper()
+
+        if self.capacidad_maxima is None or int(self.capacidad_maxima) <= 0:
+            raise ErrorDatosInvalidos("capacidad_maxima", "La capacidad de la conservadora debe ser mayor a 0.")
+        self.capacidad_maxima = int(self.capacidad_maxima)
+
+        if (
+            self.temperatura_min is not None
+            and self.temperatura_max is not None
+            and self.temperatura_min > self.temperatura_max
+        ):
+            raise ErrorDatosInvalidos("temperatura", "La temperatura mínima no puede ser mayor que la máxima.")
 
     @property
     def cantidad_muestras(self) -> int:
@@ -138,14 +177,17 @@ class RemitoBiologico:
     muestras: list[MuestraBiologica] = field(default_factory=list)
 
     def __post_init__(self) -> None:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida número de remito y estado del remito biológico."""
         if not self.numero_remito or not self.numero_remito.strip():
             raise ErrorDatosInvalidos("numero_remito", "El número de remito es obligatorio.")
         self.numero_remito = self.numero_remito.strip().upper()
         self.validar_estado()
 
     def validar_estado(self) -> None:
-        estados_validos = ("EnPreparacion", "Precintado", "EnTransito", "Recibido", "Rechazado")
-        if self.estado not in estados_validos:
+        if self.estado not in ESTADOS_REMITO_VALIDOS:
             raise ErrorDatosInvalidos("estado", f"Estado de remito inválido '{self.estado}'.")
 
     def precintar(self, precinto: PrecintoSanitario) -> None:
@@ -179,15 +221,8 @@ class RemitoBiologico:
             raise ErrorValidacionNegocio(
                 f"No se puede recibir un remito en estado '{self.estado}'. Debe estar 'EnTransito'."
             )
-        estado_limpio = estado_precinto.strip().capitalize() if estado_precinto else ""
-        if estado_limpio == "Intacto":
-            self.estado = "Recibido"
-        elif estado_limpio in ("Roto", "Violado"):
-            self.estado = "Rechazado"
-        else:
-            raise ErrorValidacionNegocio(
-                f"Estado de precinto desconocido '{estado_precinto}'. Debe ser 'Intacto', 'Roto' o 'Violado'."
-            )
+        estado_limpio = PrecintoSanitario.normalizar_estado(estado_precinto)
+        self.estado = "Recibido" if estado_limpio == "Intacto" else "Rechazado"
 
 
 @dataclass

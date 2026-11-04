@@ -44,6 +44,8 @@ class LiquidacionFactura:
 class EstrategiaFacturacion(ABC):
     """
     Interfaz abstracta para el cálculo del comprobante de atención.
+    Provee métodos protegidos comunes (Template / Helpers) para evitar duplicación
+    de código (DRY) en la construcción de los ítems base de consulta y laboratorio.
     """
 
     @property
@@ -51,6 +53,33 @@ class EstrategiaFacturacion(ABC):
     def nombre(self) -> str:
         """Nombre identificatorio de la estrategia (guardado en el comprobante)."""
         pass
+
+    @staticmethod
+    def _crear_item_consulta(costo_consulta: float, motivo_consulta: str) -> tuple[float, ItemFactura]:
+        """Normaliza el arancel clínico y construye el ítem de consulta."""
+        subtotal_clinica = max(0.0, float(costo_consulta))
+        item = ItemFactura(tipo_concepto="Consulta", concepto=motivo_consulta, monto=subtotal_clinica)
+        return subtotal_clinica, item
+
+    @staticmethod
+    def _crear_items_laboratorio(
+        costos_laboratorio: list[tuple[str, float]],
+        prefijo_concepto: str = "Análisis",
+    ) -> tuple[float, list[ItemFactura]]:
+        """Construye los ítems de estudios bioquímicos y acumula su subtotal."""
+        subtotal_lab = 0.0
+        items_lab: list[ItemFactura] = []
+        for nombre_estudio, costo in costos_laboratorio:
+            monto_estudio = max(0.0, float(costo))
+            subtotal_lab += monto_estudio
+            items_lab.append(
+                ItemFactura(
+                    tipo_concepto="Laboratorio",
+                    concepto=f"{prefijo_concepto}: {nombre_estudio}",
+                    monto=monto_estudio,
+                )
+            )
+        return subtotal_lab, items_lab
 
     @abstractmethod
     def liquidar(
@@ -86,16 +115,10 @@ class TarifaEstandar(EstrategiaFacturacion):
         costos_laboratorio: list[tuple[str, float]],
         motivo_consulta: str = "Consulta médica veterinaria",
     ) -> LiquidacionFactura:
-        items: list[ItemFactura] = []
-        subtotal_clinica = max(0.0, float(costo_consulta))
-        items.append(ItemFactura(tipo_concepto="Consulta", concepto=motivo_consulta, monto=subtotal_clinica))
+        subtotal_clinica, item_consulta = self._crear_item_consulta(costo_consulta, motivo_consulta)
+        subtotal_lab, items_lab = self._crear_items_laboratorio(costos_laboratorio)
 
-        subtotal_lab = 0.0
-        for nombre_estudio, costo in costos_laboratorio:
-            monto_estudio = max(0.0, float(costo))
-            subtotal_lab += monto_estudio
-            items.append(ItemFactura(tipo_concepto="Laboratorio", concepto=f"Análisis: {nombre_estudio}", monto=monto_estudio))
-
+        items = [item_consulta, *items_lab]
         total = subtotal_clinica + subtotal_lab
         return LiquidacionFactura(
             nombre_estrategia=self.nombre,
@@ -125,15 +148,11 @@ class TarifaUrgenciaLaboratorio(EstrategiaFacturacion):
         costos_laboratorio: list[tuple[str, float]],
         motivo_consulta: str = "Consulta médica veterinaria (Urgencia)",
     ) -> LiquidacionFactura:
-        items: list[ItemFactura] = []
-        subtotal_clinica = max(0.0, float(costo_consulta))
-        items.append(ItemFactura(tipo_concepto="Consulta", concepto=motivo_consulta, monto=subtotal_clinica))
-
-        subtotal_lab_base = 0.0
-        for nombre_estudio, costo in costos_laboratorio:
-            monto_estudio = max(0.0, float(costo))
-            subtotal_lab_base += monto_estudio
-            items.append(ItemFactura(tipo_concepto="Laboratorio", concepto=f"Análisis urgente: {nombre_estudio}", monto=monto_estudio))
+        subtotal_clinica, item_consulta = self._crear_item_consulta(costo_consulta, motivo_consulta)
+        subtotal_lab_base, items_lab = self._crear_items_laboratorio(
+            costos_laboratorio, prefijo_concepto="Análisis urgente"
+        )
+        items = [item_consulta, *items_lab]
 
         recargo = round(subtotal_lab_base * (self.porcentaje_recargo / 100.0), 2)
         if recargo > 0:
@@ -173,9 +192,8 @@ class TarifaConvenioRed(EstrategiaFacturacion):
         costos_laboratorio: list[tuple[str, float]],
         motivo_consulta: str = "Consulta médica veterinaria",
     ) -> LiquidacionFactura:
-        items: list[ItemFactura] = []
-        subtotal_clinica_bruto = max(0.0, float(costo_consulta))
-        items.append(ItemFactura(tipo_concepto="Consulta", concepto=motivo_consulta, monto=subtotal_clinica_bruto))
+        subtotal_clinica_bruto, item_consulta = self._crear_item_consulta(costo_consulta, motivo_consulta)
+        items: list[ItemFactura] = [item_consulta]
 
         descuento = round(subtotal_clinica_bruto * (self.porcentaje_descuento / 100.0), 2)
         if descuento > 0:
@@ -185,11 +203,8 @@ class TarifaConvenioRed(EstrategiaFacturacion):
                 monto=-descuento,
             ))
 
-        subtotal_lab = 0.0
-        for nombre_estudio, costo in costos_laboratorio:
-            monto_estudio = max(0.0, float(costo))
-            subtotal_lab += monto_estudio
-            items.append(ItemFactura(tipo_concepto="Laboratorio", concepto=f"Análisis: {nombre_estudio}", monto=monto_estudio))
+        subtotal_lab, items_lab = self._crear_items_laboratorio(costos_laboratorio)
+        items.extend(items_lab)
 
         subtotal_clinica_neto = max(0.0, subtotal_clinica_bruto - descuento)
         total = subtotal_clinica_neto + subtotal_lab

@@ -80,7 +80,7 @@ class LogisticaDAO(DAOBase):
 
     def actualizar_estado_precinto(self, precinto_id: int, nuevo_estado: str) -> None:
         """Actualiza el estado físico verificado del precinto (Intacto, Roto, Violado)."""
-        estado_limpio = nuevo_estado.strip().capitalize()
+        estado_limpio = PrecintoSanitario.normalizar_estado(nuevo_estado)
         sql = "UPDATE precintos_sanitarios SET estado = ? WHERE id = ?"
         with self.conexion.transaccion() as cursor:
             cursor.execute(sql, (estado_limpio, precinto_id))
@@ -93,7 +93,7 @@ class LogisticaDAO(DAOBase):
         """
         Inserta un remito biológico y registra su evento inicial en el historial inmutable.
         """
-        remito.validar_estado()
+        remito.validar()
         sql_remito = """
             INSERT INTO remitos_biologicos (
                 numero_remito, clinica_origen_id, laboratorio_destino_id,
@@ -193,6 +193,32 @@ class LogisticaDAO(DAOBase):
         """
         filas = self.conexion.consultar_todos(sql, (estado,))
         return [self._mapear_remito(f) for f in filas]
+
+    def listar_todos_los_remitos(self) -> list[RemitoBiologico]:
+        """Lista todos los remitos biológicos registrados ordenados del más reciente al más antiguo."""
+        sql = """
+            SELECT id, numero_remito, clinica_origen_id, laboratorio_destino_id,
+                   conservadora_id, precinto_id, estado, fecha_hora_creacion
+            FROM remitos_biologicos
+            ORDER BY id DESC
+        """
+        filas = self.conexion.consultar_todos(sql)
+        return [self._mapear_remito(f) for f in filas]
+
+    def listar_laboratorios(self) -> list[dict]:
+        """Devuelve los laboratorios centrales registrados en la red."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, nombre, direccion, telefono FROM laboratorios ORDER BY nombre"
+        )
+        return [dict(f) for f in filas]
+
+    def listar_transportistas(self) -> list[dict]:
+        """Devuelve las empresas/choferes transportistas habilitados."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, nombre, cuit_dni, vehiculo_patente, telefono "
+            "FROM transportistas ORDER BY nombre"
+        )
+        return [dict(f) for f in filas]
 
     # ----------------------------------------------------------------------------------
     # Envíos de Laboratorio

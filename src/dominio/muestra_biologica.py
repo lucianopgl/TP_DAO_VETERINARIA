@@ -9,14 +9,16 @@ que todas las transiciones respeten la cadena de custodia sanitaria.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from src.dominio.excepciones import ErrorDatosInvalidos
-from src.patrones.estado_muestra import EstadoMuestra, EstadoExtraida, crear_estado_desde_nombre
+from src.patrones.estado_muestra import EstadoMuestra, crear_estado_desde_nombre
 
 if TYPE_CHECKING:
     from src.dominio.logistica import RemitoBiologico
     from src.dominio.facturacion import ResultadoAnalisis
+
+OBSERVACION_EXTRACCION_INICIAL: str = "Extracción de muestra biológica."
 
 
 @dataclass(frozen=True)
@@ -52,11 +54,8 @@ class MuestraBiologica:
         nombre_tipo_muestra: str = "",
         historial_inicial: list[RegistroTrazabilidad] | None = None,
     ) -> None:
-        if not codigo_muestra or not codigo_muestra.strip():
-            raise ErrorDatosInvalidos("codigo_muestra", "El código identificador de la muestra es obligatorio.")
-
         self.id = id
-        self.codigo_muestra = codigo_muestra.strip().upper()
+        self.codigo_muestra = codigo_muestra
         self.orden_id = orden_id
         self.tipo_muestra_id = tipo_muestra_id
         self.fecha_hora_extraccion = fecha_hora_extraccion
@@ -64,6 +63,8 @@ class MuestraBiologica:
         self.motivo_rechazo = motivo_rechazo
         self.nombre_tipo_muestra = nombre_tipo_muestra
         self.resultado: ResultadoAnalisis | None = None
+
+        self.validar()
 
         # Historial interno (protegido)
         self._historial: list[RegistroTrazabilidad] = list(historial_inicial or [])
@@ -78,9 +79,15 @@ class MuestraBiologica:
                 muestra_id=self.id or 0,
                 estado_anterior=None,
                 estado_nuevo=self._estado.nombre,
-                fecha_hora=fecha_hora_extraccion,
-                observacion="Muestra biológica extraída del paciente.",
+                fecha_hora=self.fecha_hora_extraccion,
+                observacion=OBSERVACION_EXTRACCION_INICIAL,
             ))
+
+    def validar(self) -> None:
+        """Valida los campos obligatorios de la muestra biológica."""
+        if not self.codigo_muestra or not str(self.codigo_muestra).strip():
+            raise ErrorDatosInvalidos("codigo_muestra", "El código identificador de la muestra es obligatorio.")
+        self.codigo_muestra = str(self.codigo_muestra).strip().upper()
 
     # ----------------------------------------------------------------------------------
     # Propiedades

@@ -2,6 +2,7 @@
 ## Proyecto Integrador: Red de Clínicas Veterinarias y Derivación de Laboratorio
 **Cátedra:** Desarrollo de Aplicaciones con Objetos (DAO) — Ingeniería en Sistemas de Información (2026)  
 **Tema:** Tema 2 — Veterinaria: Red de Clínicas y Derivación de Laboratorio  
+**Grupo:** Grupo 089 — Integrantes: 85656 Bertoni Rocio | 90074 Simonetti Franco | 90175 Ojea Nicolas | 94030 Diaz Tomás Agustín | 95738 Paglino Luciano Ivo  
 
 ---
 

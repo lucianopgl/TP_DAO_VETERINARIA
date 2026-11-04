@@ -270,6 +270,86 @@ class PruebaValidacionesDominio(unittest.TestCase):
         # Turno a las 09:00 por 30 minutos (termina a las 09:30: NO se superpone)
         self.assertFalse(c1.se_superpone_con("2026-10-19 09:00:00", 30))
 
+    def test_validaciones_unitarias_cliente(self):
+        # DNI inválido
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "123", "Juan", "Pérez", "351-111")
+        # Nombre vacío
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "30111222", "   ", "Pérez", "351-111")
+        # Apellido vacío
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "30111222", "Juan", "", "351-111")
+        # Teléfono vacío
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "30111222", "Juan", "Pérez", "")
+        # Email con formato inválido
+        with self.assertRaises(ErrorDatosInvalidos):
+            Cliente(None, "30111222", "Juan", "Pérez", "351-111", email="correo_invalido")
+
+        c_ok = Cliente(1, "30111222", "Juan", "Pérez", "351-111", email="juan@mail.com")
+        self.assertEqual(c_ok.nombre_completo, "Pérez, Juan")
+        self.assertIn("30111222", str(c_ok))
+
+    def test_validaciones_unitarias_mascota_y_tratamiento(self):
+        # Sexo inválido
+        with self.assertRaises(ErrorDatosInvalidos):
+            Mascota(None, "Rex", 1, 3, "Desconocido", 1)
+        # Nombre vacío
+        with self.assertRaises(ErrorDatosInvalidos):
+            Mascota(None, "  ", 1, 3, "Macho", 1)
+
+        # Tratamiento con descripción vacía o duración <= 0
+        with self.assertRaises(ErrorDatosInvalidos):
+            Tratamiento(None, 1, "  ")
+        with self.assertRaises(ErrorDatosInvalidos):
+            Tratamiento(None, 1, "Antibiótico", duracion_dias=0)
+
+        # VacunaAplicada sin fecha
+        with self.assertRaises(ErrorDatosInvalidos):
+            VacunaAplicada(None, 1, 1, "")
+
+    def test_validaciones_unitarias_consulta_orden_y_facturacion(self):
+        # Consulta con duración <= 0 o costo negativo o fecha mal formateada
+        with self.assertRaises(ErrorDatosInvalidos):
+            ConsultaMedica(None, 1, 1, 1, "2026-10-19 10:00:00", "Control", duracion_minutos=0)
+        with self.assertRaises(ErrorDatosInvalidos):
+            ConsultaMedica(None, 1, 1, 1, "2026-10-19 10:00:00", "Control", costo_consulta=-10.0)
+        with self.assertRaises(ErrorDatosInvalidos):
+            ConsultaMedica(None, 1, 1, 1, "19-10-2026", "Control")
+
+        # OrdenDerivacion con prioridad inválida
+        with self.assertRaises(ErrorDatosInvalidos):
+            OrdenDerivacion(None, 1, 1, "2026-10-19 10:00:00", prioridad="SuperUrgente")
+
+        # ResultadoAnalisis inválido
+        with self.assertRaises(ErrorDatosInvalidos):
+            ResultadoAnalisis(None, 1, 1, "", "Conclusión", 1000.0, "2026-10-19 12:00:00")
+        with self.assertRaises(ErrorDatosInvalidos):
+            ResultadoAnalisis(None, 1, 1, "Valores", "", 1000.0, "2026-10-19 12:00:00")
+        with self.assertRaises(ErrorDatosInvalidos):
+            ResultadoAnalisis(None, 1, 1, "Valores", "Conclusión", -1.0, "2026-10-19 12:00:00")
+
+        # DetalleComprobante y ComprobanteAtencion inválidos
+        from src.dominio.facturacion import ComprobanteAtencion, DetalleComprobante
+        with self.assertRaises(ErrorDatosInvalidos):
+            DetalleComprobante(None, None, "ConceptoInexistente", "Item", 100.0)
+        with self.assertRaises(ErrorDatosInvalidos):
+            ComprobanteAtencion(None, "", 1, "Tarifa Estándar", 100.0, "2026-10-19 12:00:00")
+        with self.assertRaises(ErrorDatosInvalidos):
+            ComprobanteAtencion(None, "FAC-01", 1, "Tarifa Estándar", -50.0, "2026-10-19 12:00:00")
+
+    def test_validaciones_unitarias_logistica(self):
+        # Precinto con estado inválido
+        with self.assertRaises(ErrorDatosInvalidos):
+            PrecintoSanitario(None, "PREC-01", estado="Abierto")
+        # Conservadora con temperaturas invertidas o capacidad <= 0
+        with self.assertRaises(ErrorDatosInvalidos):
+            ConservadoraIsotermica(None, "CONS-01", capacidad_maxima=0)
+        with self.assertRaises(ErrorDatosInvalidos):
+            ConservadoraIsotermica(None, "CONS-01", capacidad_maxima=5, temperatura_min=10.0, temperatura_max=2.0)
+
+
 
 if __name__ == "__main__":
     unittest.main()

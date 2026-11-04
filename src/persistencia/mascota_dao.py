@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import sqlite3
 from datetime import datetime
+from src.dominio.excepciones import ErrorDatosInvalidos
 from src.dominio.mascota import Mascota
 from src.dominio.historia_clinica import HistoriaClinica, VacunaAplicada
 from src.persistencia.dao_base import DAOBase
@@ -45,14 +46,14 @@ class MascotaDAO(DAOBase):
             mascota.id = mascota_id
 
             # Creación atómica de la historia clínica asociada
-            fecha_apertura = fecha_apertura_historia or "2026-10-19"
+            fecha_apertura = fecha_apertura_historia or datetime.now().strftime("%Y-%m-%d")
             cursor.execute(sql_historia, (mascota_id, fecha_apertura))
             return mascota_id
 
     def actualizar(self, mascota: Mascota) -> None:
         """Actualiza los datos de la mascota."""
         if mascota.id is None:
-            raise ValueError("No se puede actualizar una mascota sin ID.")
+            raise ErrorDatosInvalidos("id", "No se puede actualizar una mascota sin ID.")
         mascota.validar()
         sql = """
             UPDATE mascotas
@@ -119,6 +120,7 @@ class MascotaDAO(DAOBase):
 
     def registrar_vacuna_aplicada(self, vacuna: VacunaAplicada) -> int:
         """Registra la aplicación de una dosis de vacuna."""
+        vacuna.validar()
         sql = """
             INSERT INTO vacunas_aplicadas (mascota_id, vacuna_id, fecha_aplicacion, consulta_id)
             VALUES (?, ?, ?, ?)
@@ -168,62 +170,51 @@ class MascotaDAO(DAOBase):
         filas = self.conexion.consultar_todos(sql, (especie_id,))
         return [dict(f) for f in filas]
 
+    def listar_especies(self) -> list[dict]:
+        """Devuelve el catálogo paramétrico de especies animales."""
+        filas = self.conexion.consultar_todos(
+            "SELECT id, nombre FROM catalogo_especies ORDER BY id"
+        )
+        return [dict(f) for f in filas]
+
+    def listar_catalogo_vacunas(self, especie_id: int | None = None) -> list[dict]:
+        """Devuelve el catálogo de vacunas (opcionalmente filtrado por especie)."""
+        if especie_id is not None:
+            filas = self.conexion.consultar_todos(
+                "SELECT id, nombre, especie_id, es_obligatoria, frecuencia_refuerzo_meses "
+                "FROM catalogo_vacunas WHERE especie_id = ? ORDER BY es_obligatoria DESC, nombre",
+                (especie_id,),
+            )
+        else:
+            filas = self.conexion.consultar_todos(
+                "SELECT id, nombre, especie_id, es_obligatoria, frecuencia_refuerzo_meses "
+                "FROM catalogo_vacunas ORDER BY especie_id, es_obligatoria DESC, nombre"
+            )
+        return [dict(f) for f in filas]
+
     def obtener_vacunas_pendientes(
         self, mascota_id: int, fecha_referencia: str | None = None
     ) -> list[dict]:
         """
-        Calcula las vacunas obligatorias pendientes o vencidas para una mascota.
-        Compara las vacunas obligatorias de su especie contra las dosis aplicadas.
-
-        Returns:
-            Lista de diccionarios con {vacuna_id, nombre_vacuna, obligatoria, motivo_pendiente, ultima_fecha_aplicacion}.
+        Recupera los datos de vacunación de la mascota y delega el cálculo de
+        vencimientos/faltantes en la entidad de dominio `HistoriaClinica`
+        (Principio Experto en Información y SRP).
         """
         mascota = self.obtener_por_id(mascota_id)
         if not mascota:
             return []
 
         obligatorias = self.obtener_catalogo_vacunas_obligatorias(mascota.especie_id)
-        aplicadas = self.listar_vacunas_de_mascota(mascota_id)
-
-        # Mapa de vacunas aplicadas indexadas por vacuna_id -> fecha más reciente
-        fechas_ultimas: dict[int, str] = {}
-        for va in aplicadas:
-            if va.vacuna_id not in fechas_ultimas or va.fecha_aplicacion > fechas_ultimas[va.vacuna_id]:
-                fechas_ultimas[va.vacuna_id] = va.fecha_aplicacion
-
-        fecha_ref_str = fecha_referencia or datetime.now().strftime("%Y-%m-%d")
-        fecha_ref_dt = datetime.strptime(fecha_ref_str, "%Y-%m-%d")
-
-        pendientes: list[dict] = []
-        for vac in obligatorias:
-            vid = vac["id"]
-            nombre = vac["nombre"]
-            frecuencia_meses = vac["frecuencia_refuerzo_meses"] or 12
-
-            if vid not in fechas_ultimas:
-                pendientes.append({
-                    "vacuna_id": vid,
-                    "nombre_vacuna": nombre,
-                    "es_obligatoria": True,
-                    "motivo_pendiente": "Nunca aplicada",
-                    "ultima_fecha_aplicacion": None,
-                })
-            else:
-                ultima_fecha_str = fechas_ultimas[vid]
-                ultima_fecha_dt = datetime.strptime(ultima_fecha_str, "%Y-%m-%d")
-                dias_transcurridos = (fecha_ref_dt - ultima_fecha_dt).days
-                dias_limite = int(frecuencia_meses * 30.4)
-
-                if dias_transcurridos > dias_limite:
-                    pendientes.append({
-                        "vacuna_id": vid,
-                        "nombre_vacuna": nombre,
-                        "es_obligatoria": True,
-                        "motivo_pendiente": f"Refuerzo vencido (última: {ultima_fecha_str})",
-                        "ultima_fecha_aplicacion": ultima_fecha_str,
-                    })
-
-        return pendientes
+        historia = self.obtener_historia_clinica(mascota_id) or HistoriaClinica(
+            id=None,
+            mascota_id=mascota_id,
+            fecha_apertura=datetime.now().strftime("%Y-%m-%d"),
+            vacunas=self.listar_vacunas_de_mascota(mascota_id),
+        )
+        return historia.calcular_vacunas_pendientes(
+            catalogo_obligatorias=obligatorias,
+            fecha_referencia=fecha_referencia,
+        )
 
     # ----------------------------------------------------------------------------------
     # Historia Clínica

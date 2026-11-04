@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from src.dominio.muestra_biologica import MuestraBiologica
 
 FORMATO_FECHA_HORA = "%Y-%m-%d %H:%M:%S"
+PRIORIDADES_ORDEN_VALIDAS: tuple[str, ...] = ("Normal", "Urgente")
 
 
 @dataclass
@@ -54,23 +55,35 @@ class ConsultaMedica:
     def __post_init__(self) -> None:
         self.validar()
 
+    @staticmethod
+    def validar_rango_horario(fecha_hora_inicio: str, duracion_minutos: int) -> tuple[datetime, datetime]:
+        """
+        Valida un intervalo horario de atención médica sin necesidad de instanciar
+        una entidad ConsultaMedica completa.
+
+        Returns:
+            Tupla (inicio_dt, fin_dt) con los objetos datetime validados.
+        """
+        if duracion_minutos is None or duracion_minutos <= 0:
+            raise ErrorDatosInvalidos("duracion_minutos", "La duración de la consulta debe ser mayor a 0 minutos.")
+
+        try:
+            inicio_dt = datetime.strptime(fecha_hora_inicio, FORMATO_FECHA_HORA)
+        except (ValueError, TypeError):
+            raise ErrorDatosInvalidos("fecha_hora_inicio", f"Formato inválido. Se espera '{FORMATO_FECHA_HORA}'.")
+
+        return inicio_dt, inicio_dt + timedelta(minutes=duracion_minutos)
+
     def validar(self) -> None:
         """Valida los campos obligatorios y rangos numéricos de la consulta."""
         if not self.motivo or not self.motivo.strip():
             raise ErrorDatosInvalidos("motivo", "El motivo de la consulta es obligatorio.")
         self.motivo = self.motivo.strip()
 
-        if self.duracion_minutos <= 0:
-            raise ErrorDatosInvalidos("duracion_minutos", "La duración de la consulta debe ser mayor a 0 minutos.")
-
         if self.costo_consulta < 0:
             raise ErrorDatosInvalidos("costo_consulta", "El costo de la consulta no puede ser negativo.")
 
-        # Valida que la fecha y hora cumpla el formato estricto ISO
-        try:
-            datetime.strptime(self.fecha_hora_inicio, FORMATO_FECHA_HORA)
-        except (ValueError, TypeError):
-            raise ErrorDatosInvalidos("fecha_hora_inicio", f"Formato inválido. Se espera '{FORMATO_FECHA_HORA}'.")
+        self.validar_rango_horario(self.fecha_hora_inicio, self.duracion_minutos)
 
     @property
     def inicio_dt(self) -> datetime:
@@ -92,8 +105,7 @@ class ConsultaMedica:
         Verifica matemáticamente si esta consulta se solapa en el tiempo con otro turno:
             Inicio_A < Fin_B  y  Fin_A > Inicio_B
         """
-        otro_inicio = datetime.strptime(inicio_iso, FORMATO_FECHA_HORA)
-        otro_fin = otro_inicio + timedelta(minutes=duracion_min)
+        otro_inicio, otro_fin = self.validar_rango_horario(inicio_iso, duracion_min)
         return (self.inicio_dt < otro_fin) and (self.fin_dt > otro_inicio)
 
 
@@ -124,7 +136,11 @@ class OrdenDerivacion:
     muestras: list[MuestraBiologica] = field(default_factory=list)
 
     def __post_init__(self) -> None:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida los datos y prioridad de la orden de derivación."""
         prioridad_limpia = self.prioridad.strip().capitalize() if self.prioridad else ""
-        if prioridad_limpia not in ("Normal", "Urgente"):
+        if prioridad_limpia not in PRIORIDADES_ORDEN_VALIDAS:
             raise ErrorDatosInvalidos("prioridad", "La prioridad de la orden debe ser 'Normal' o 'Urgente'.")
         self.prioridad = prioridad_limpia

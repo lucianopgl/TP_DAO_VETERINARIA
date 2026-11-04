@@ -26,6 +26,7 @@ class FacturacionDAO(DAOBase):
 
     def crear_resultado(self, resultado: ResultadoAnalisis) -> int:
         """Inserta el resultado emitido por el bioquímico sobre una muestra viable."""
+        resultado.validar()
         sql = """
             INSERT INTO resultados_analisis (
                 muestra_id, profesional_laboratorio_id, valores_medidos,
@@ -69,6 +70,51 @@ class FacturacionDAO(DAOBase):
             bioquimico_nombre=fila["bioquimico_nombre"],
         )
 
+    def listar_costos_estudios_completados_por_consulta(
+        self, consulta_id: int
+    ) -> list[tuple[str, float]]:
+        """
+        Recupera en una única consulta SQL todos los análisis de laboratorio ya completados
+        para una consulta médica, devolviendo pares `(etiqueta_estudio, costo_analisis)`
+        (evita bucles anidados N+1 al liquidar facturas).
+        """
+        sql = """
+            SELECT cte.nombre AS nombre_estudio,
+                   mb.codigo_muestra,
+                   ra.costo_analisis
+            FROM ordenes_derivacion od
+            JOIN catalogo_tipos_estudio cte ON cte.id = od.tipo_estudio_id
+            JOIN muestras_biologicas mb ON mb.orden_id = od.id
+            JOIN resultados_analisis ra ON ra.muestra_id = mb.id
+            WHERE od.consulta_id = ?
+            ORDER BY od.fecha_hora_emision ASC, mb.id ASC
+        """
+        filas = self.conexion.consultar_todos(sql, (consulta_id,))
+        return [
+            (f"{f['nombre_estudio']} ({f['codigo_muestra']})", float(f["costo_analisis"]))
+            for f in filas
+        ]
+
+    def listar_profesionales_laboratorio(self) -> list[dict]:
+        """Devuelve los bioquímicos/profesionales del laboratorio central."""
+        filas = self.conexion.consultar_todos(
+            "SELECT pl.id, pl.matricula, pl.nombre, pl.apellido, "
+            "pl.laboratorio_id, l.nombre AS laboratorio_nombre "
+            "FROM profesionales_laboratorio pl "
+            "JOIN laboratorios l ON pl.laboratorio_id = l.id "
+            "ORDER BY pl.apellido, pl.nombre"
+        )
+        return [dict(f) for f in filas]
+
+    def obtener_profesional_laboratorio_por_id(self, profesional_id: int) -> dict | None:
+        """Busca un profesional de laboratorio por su ID."""
+        fila = self.conexion.consultar_uno(
+            "SELECT id, matricula, nombre, apellido, laboratorio_id "
+            "FROM profesionales_laboratorio WHERE id = ?",
+            (profesional_id,),
+        )
+        return dict(fila) if fila else None
+
     # ----------------------------------------------------------------------------------
     # Comprobantes y Detalles (Facturación)
     # ----------------------------------------------------------------------------------
@@ -78,6 +124,7 @@ class FacturacionDAO(DAOBase):
         Inserta la cabecera del comprobante y todos sus detalles desagregados
         en una transacción estrictamente atómica.
         """
+        comprobante.validar()
         sql_cabecera = """
             INSERT INTO comprobantes (
                 numero_comprobante, consulta_id, estrategia_tarifa,
@@ -101,6 +148,7 @@ class FacturacionDAO(DAOBase):
             comprobante.id = comprobante_id
 
             for detalle in comprobante.detalles:
+                detalle.validar()
                 cursor.execute(sql_detalle, (
                     comprobante_id,
                     detalle.tipo_concepto,
