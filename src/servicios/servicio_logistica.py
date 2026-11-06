@@ -354,6 +354,7 @@ class ServicioLogistica:
                 "REMITO_RECIBIDO_CONFORME",
                 remito_id=remito_id,
                 numero_remito=remito.numero_remito,
+                cantidad_muestras=len(remito.muestras),
                 fecha_hora=marca_temporal,
             )
 

@@ -22,6 +22,8 @@ import customtkinter as ctk
 
 from src.interfaz.vistas.vista_clientes import VistaClientes
 from src.interfaz.vistas.vista_consultas import VistaConsultas
+from src.interfaz.vistas.vista_laboratorio import VistaLaboratorio
+from src.interfaz.vistas.vista_logistica import VistaLogistica
 from src.interfaz.vistas.vista_mascotas import VistaMascotas
 from src.patrones.observador_eventos import Observador, SujetoEventos
 from src.servicios.servicio_clinica import ServicioClinica
@@ -42,7 +44,8 @@ def formatear_evento_notificacion(tipo_evento: str, datos: dict[str, Any]) -> tu
     if tipo_evento == "MUESTRAS_RECHAZADAS_EN_RECEPCION":
         remito = datos.get("numero_remito", "S/N")
         estado_precinto = datos.get("estado_precinto", "Violado/Roto")
-        codigos = ", ".join(datos.get("muestras_rechazadas", []))
+        lista_codigos = datos.get("codigos_muestras") or datos.get("muestras_rechazadas", [])
+        codigos = ", ".join(lista_codigos)
         return (
             f"[{hora}] ALERTA CRÍTICA: Remito {remito} rechazado por precinto '{estado_precinto}'. "
             f"Muestras invalidadas: {codigos}",
@@ -58,14 +61,14 @@ def formatear_evento_notificacion(tipo_evento: str, datos: dict[str, Any]) -> tu
         )
     if tipo_evento == "REMITO_DESPACHADO":
         remito = datos.get("numero_remito", "S/N")
-        fecha_despacho = datos.get("fecha_hora_despacho", "")
+        fecha_despacho = datos.get("fecha_hora_despacho") or datos.get("fecha_hora", "")
         return (
             f"[{hora}] En tránsito: Remito {remito} despachado hacia el laboratorio central ({fecha_despacho}).",
             "#1D4ED8",
         )
     if tipo_evento == "RESULTADO_ANALISIS_LISTO":
         codigo = datos.get("codigo_muestra", "S/C")
-        conclusion = datos.get("conclusion", "")
+        conclusion = datos.get("conclusion") or f"Firmado por {datos.get('bioquimico', 'Laboratorio')}"
         return (
             f"[{hora}] Resultado bioquímico disponible — Muestra {codigo}: {conclusion}",
             "#0F766E",
@@ -203,7 +206,7 @@ class VentanaPrincipal(ctk.CTk, Observador):
         self._inicializar_vistas()
 
     def _inicializar_vistas(self) -> None:
-        """Instancia las vistas disponibles inyectando el servicio correspondiente."""
+        """Instancia las vistas disponibles inyectando los servicios correspondientes."""
         self._vistas["clientes"] = VistaClientes(
             self._contenedor_central,
             servicio_clinica=self._srv_clinica,
@@ -216,20 +219,22 @@ class VentanaPrincipal(ctk.CTk, Observador):
             self._contenedor_central,
             servicio_clinica=self._srv_clinica,
         )
+        self._vistas["logistica"] = VistaLogistica(
+            self._contenedor_central,
+            servicio_logistica=self._srv_logistica,
+            servicio_clinica=self._srv_clinica,
+        )
+        self._vistas["laboratorio"] = VistaLaboratorio(
+            self._contenedor_central,
+            servicio_laboratorio=self._srv_laboratorio,
+            servicio_clinica=self._srv_clinica,
+        )
 
-        # Vistas de las Etapas 3 y 4 (se habilitarán en los próximos pasos)
+        # Vista de la Etapa 4 (se habilitará en el próximo paso)
         etapas_pendientes = {
-            "logistica": (
-                "Procesos 4, 5 y 6: Conservadoras (Iterator), Remitos, Despacho y Recepción",
-                "Se implementará en la Etapa 3 tras validar la Etapa 2.",
-            ),
-            "laboratorio": (
-                "Proceso 7: Resultados Bioquímicos (State) y Facturación (Strategy)",
-                "Se implementará en la Etapa 3 tras validar la Etapa 2.",
-            ),
             "reportes": (
                 "Reportes Gerenciales y Sanitarios + Exportación CSV",
-                "Se implementará en la Etapa 4.",
+                "Se implementará en la Etapa 4 tras validar la Etapa 3.",
             ),
         }
         for clave, (titulo, descripcion) in etapas_pendientes.items():

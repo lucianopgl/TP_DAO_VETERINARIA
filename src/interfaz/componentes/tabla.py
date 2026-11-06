@@ -27,8 +27,9 @@ class TablaDatos(ctk.CTkFrame):
     """
     Tabla reutilizable con encabezados configurables, scrollbars y selección simple.
 
-    Cada columna se define mediante una tupla:
+    Cada columna se define preferentemente mediante una tupla:
         `(id_columna, titulo_encabezado, ancho_pixeles)`
+    O bien mediante una lista de identificadores con diccionarios opcionales `encabezados` y `anchos`.
     """
 
     _estilo_inicializado: bool = False
@@ -36,13 +37,27 @@ class TablaDatos(ctk.CTkFrame):
     def __init__(
         self,
         master: Any,
-        columnas: Sequence[tuple[str, str, int]],
+        columnas: Sequence[tuple[str, str, int]] | Sequence[str],
         al_seleccionar: Callable[[str], None] | None = None,
         altura_filas: int = 12,
+        encabezados: dict[str, str] | None = None,
+        anchos: dict[str, int] | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(master, fg_color="transparent", **kwargs)
-        self._columnas = list(columnas)
+
+        cols_normalizadas: list[tuple[str, str, int]] = []
+        for col in columnas:
+            if isinstance(col, tuple) and len(col) == 3:
+                cols_normalizadas.append(col)
+            elif isinstance(col, str):
+                titulo = (encabezados or {}).get(col, col.replace("_", " ").title())
+                ancho = (anchos or {}).get(col, 100)
+                cols_normalizadas.append((col, titulo, ancho))
+            else:
+                cols_normalizadas.append((str(col), str(col), 100))
+
+        self._columnas = cols_normalizadas
         self._al_seleccionar = al_seleccionar
         self._altura_filas = altura_filas
 
@@ -126,18 +141,31 @@ class TablaDatos(ctk.CTkFrame):
         if id_seleccionado is not None:
             self._al_seleccionar(id_seleccionado)
 
-    def cargar_filas(self, filas: Sequence[tuple[str | int, Sequence[Any]]]) -> None:
+    def cargar_filas(self, filas: Sequence[Any]) -> None:
         """
         Reemplaza el contenido de la tabla con los registros recibidos.
 
-        Args:
-            filas: Secuencia de tuplas `(id_fila, valores_columnas)`.
+        Soporta:
+            - Secuencia de tuplas `(id_fila, valores_columnas)`
+            - Secuencia de diccionarios `{"id": ..., "col_id": valor, ...}`
         """
         for item_id in self._tree.get_children():
             self._tree.delete(item_id)
 
-        for indice, (id_fila, valores) in enumerate(filas):
+        for indice, fila in enumerate(filas):
             etiqueta = "fila_par" if indice % 2 == 0 else "fila_impar"
+            if isinstance(fila, dict):
+                id_fila = fila.get("id", str(indice + 1))
+                valores = [fila.get(id_col, "") for id_col, _, _ in self._columnas]
+            elif isinstance(fila, (tuple, list)) and len(fila) == 2 and isinstance(fila[1], (tuple, list)):
+                id_fila, valores = fila
+            elif isinstance(fila, (tuple, list)):
+                id_fila = fila[0]
+                valores = fila[1:]
+            else:
+                id_fila = str(indice + 1)
+                valores = [str(fila)]
+
             valores_formateados = ["" if v is None else str(v) for v in valores]
             self._tree.insert(
                 "",
@@ -160,6 +188,18 @@ class TablaDatos(ctk.CTkFrame):
         if seleccion:
             self._tree.selection_remove(seleccion)
 
+    def deseleccionar(self) -> None:
+        """Deselecciona la fila activa en la tabla (alias de `limpiar_seleccion`)."""
+        self.limpiar_seleccion()
+
+    def limpiar(self) -> None:
+        """Elimina todas las filas cargadas en la tabla."""
+        self.cargar_filas([])
+
     def cantidad_filas(self) -> int:
         """Devuelve el número total de filas cargadas actualmente en la tabla."""
         return len(self._tree.get_children())
+
+    def obtener_todas_las_filas(self) -> list[str]:
+        """Devuelve los identificadores (iids) de todas las filas actualmente cargadas."""
+        return list(self._tree.get_children())

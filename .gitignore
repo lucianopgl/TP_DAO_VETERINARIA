@@ -52,3 +52,12 @@ desktop.ini
 # Scratch y logs temporales locales
 scratch/
 *.log
+
+# Configuración de agentes e instrucciones de IA locales (no incluir en el repositorio académico)
+.agents/
+.agent/
+.gemini/
+.cursor/
+GEMINI.md
+CLAUDE.md
+AGENTS.md

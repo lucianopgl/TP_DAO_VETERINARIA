@@ -137,6 +137,7 @@ class ServicioLaboratorio:
             orden_id=muestra.orden_id,
             consulta_id=orden.consulta_id,
             bioquimico=nombre_bioquimico,
+            conclusion=conclusion,
             fecha_hora=marca_temporal,
         )
         return self.facturacion_dao.obtener_resultado_por_muestra(muestra_id)
@@ -232,6 +233,21 @@ class ServicioLaboratorio:
     def listar_muestras_recibidas_pendientes_analisis(self) -> list[MuestraBiologica]:
         """Devuelve todas las muestras en estado 'Recibida' listas para ser analizadas."""
         return self.muestra_dao.listar_por_estado("Recibida")
+
+    def listar_muestras_bloqueadas_para_analisis(self) -> list[MuestraBiologica]:
+        """
+        Devuelve las muestras en estados no habilitados para análisis ('Rechazada',
+        'EnTransito', 'Empaquetada', 'Extraida'), permitiendo auditar en la interfaz
+        el bloqueo polimórfico del Patrón STATE (`ErrorTransicionEstadoInvalida`).
+        """
+        muestras: list[MuestraBiologica] = []
+        for estado in ("Rechazada", "EnTransito", "Empaquetada", "Extraida"):
+            muestras.extend(self.muestra_dao.listar_por_estado(estado))
+        return muestras
+
+    def listar_muestras_analizadas(self) -> list[MuestraBiologica]:
+        """Devuelve todas las muestras en estado 'Analizada'."""
+        return self.muestra_dao.listar_por_estado("Analizada")
 
     def obtener_resultado_de_muestra(self, muestra_id: int) -> ResultadoAnalisis | None:
         """Devuelve el resultado de análisis cargado para una muestra, si existe."""
