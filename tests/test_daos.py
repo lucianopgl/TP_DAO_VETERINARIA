@@ -1,6 +1,6 @@
 """
-Pruebas de Integración y Persistencia: Capa DAO (Fase 3 - Paso 3)
-================================================================
+Pruebas de Integración y Persistencia: Capa de Objetos de Acceso a Datos (DAO)
+==============================================================================
 
 Verifica el funcionamiento integral de todos los Objetos de Acceso a Datos (DAO)
 trabajando contra una base de datos SQLite en memoria:
@@ -19,7 +19,7 @@ from src.dominio.consulta_medica import ConsultaMedica, OrdenDerivacion
 from src.dominio.historia_clinica import Tratamiento, VacunaAplicada
 from src.dominio.muestra_biologica import MuestraBiologica
 from src.dominio.logistica import EnvioLaboratorio, RemitoBiologico
-from src.dominio.facturacion import ComprobanteAtencion, DetalleComprobante, ResultadoAnalisis
+from src.dominio.facturacion import ComprobanteAtencion, DetalleComprobante
 from src.dominio.excepciones import ErrorIntegridadDatos
 from src.persistencia.conexion_bd import RUTA_BD_EN_MEMORIA, ConexionBD
 from src.persistencia.inicializador_bd import inicializar_base_datos

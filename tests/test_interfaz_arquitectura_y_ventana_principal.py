@@ -1,13 +1,18 @@
 """
-Pruebas de Arquitectura y Etapa 1 de Interfaz Gráfica (`src/interfaz/`)
-=======================================================================
+Pruebas de Arquitectura de Capas y Ventana Principal (`src/interfaz/`)
+======================================================================
 
 Verifica:
-    1. Cumplimiento estricto de la regla de capas de GEMINI.md: ningún archivo dentro
-       de `src/interfaz/` ni de `src/dominio/` importa `sqlite3` ni clases DAO.
-    2. Formateo semántico de eventos del patrón Observer en la interfaz.
-    3. Captura tipada de `ErrorDatosInvalidos` y `ErrorVeterinaria` en el manejador
-       de alertas reutilizable.
+    1. Cumplimiento estricto de la regla de capas de GEMINI.md mediante análisis AST:
+       - `src/dominio/` no importa `sqlite3`, `customtkinter`, `tkinter`, `persistencia`, `servicios` ni `interfaz`.
+       - `src/patrones/` no importa `sqlite3`, `customtkinter`, `tkinter`, `persistencia`, `servicios` ni `interfaz`.
+       - `src/servicios/` no importa `customtkinter`, `tkinter` ni `interfaz` (y los servicios de negocio no importan `sqlite3`).
+       - `src/interfaz/` no importa `sqlite3` ni `src.persistencia` (DAOs).
+    2. Regla de Dominio POO: Las 15 entidades de `src/dominio/` definen y ejecutan `.validar()`.
+    3. Formateo semántico de eventos del patrón Observer en la barra de estado de la interfaz.
+    4. Captura tipada de `ErrorDatosInvalidos` y `ErrorVeterinaria` en el manejador
+       de alertas reutilizable, incluyendo resaltado automático del campo con error.
+    5. Escalado dinámico de zoom y accesibilidad visual en `VentanaPrincipal`.
 """
 
 from __future__ import annotations
@@ -15,17 +20,41 @@ from __future__ import annotations
 import ast
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
-from src.dominio.excepciones import ErrorDatosInvalidos, ErrorVeterinaria
-from src.interfaz.app import formatear_evento_notificacion
-from src.interfaz.componentes.alertas import ejecutar_accion_segura
+from src.dominio.cliente import Cliente
+from src.dominio.consulta_medica import ConsultaMedica, OrdenDerivacion
+from src.dominio.excepciones import (
+    ErrorDatosInvalidos,
+    ErrorMascotaSinResponsable,
+    ErrorVeterinaria,
+)
+from src.dominio.facturacion import (
+    ComprobanteAtencion,
+    DetalleComprobante,
+    ResultadoAnalisis,
+)
+from src.dominio.historia_clinica import (
+    HistoriaClinica,
+    Tratamiento,
+    VacunaAplicada,
+)
+from src.dominio.logistica import (
+    ConservadoraIsotermica,
+    EnvioLaboratorio,
+    PrecintoSanitario,
+    RemitoBiologico,
+)
+from src.dominio.mascota import Mascota
+from src.dominio.muestra_biologica import MuestraBiologica, RegistroTrazabilidad
+from src.interfaz.app import VentanaPrincipal, formatear_evento_notificacion
+from src.interfaz.componentes.alertas import COLOR_BORDE_ERROR, ejecutar_accion_segura
 
 RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
 
 
-class PruebaInterfazEtapa1(unittest.TestCase):
-    """Pruebas unitarias de arquitectura y componentes base de la Etapa 1."""
+class PruebaArquitecturaInterfazYVentanaPrincipal(unittest.TestCase):
+    """Pruebas unitarias de arquitectura en capas, entidades de dominio y ventana principal."""
 
     def test_regla_arquitectonica_interfaz_sin_sqlite_ni_daos(self) -> None:
         """
@@ -61,6 +90,64 @@ class PruebaInterfazEtapa1(unittest.TestCase):
                         modulo.startswith("src.persistencia"),
                         f"La interfaz no debe acoplarse a src.persistencia ({archivo})",
                     )
+
+    def test_regla_arquitectonica_unidireccional_en_todas_las_capas(self) -> None:
+        """
+        Verifica mediante AST que `dominio`, `patrones` y `servicios` respeten el
+        bajo acoplamiento y la dirección de dependencias hacia adentro.
+        """
+        reglas_prohibidas = {
+            "dominio": ("sqlite3", "tkinter", "customtkinter", "src.persistencia", "src.servicios", "src.interfaz"),
+            "patrones": ("sqlite3", "tkinter", "customtkinter", "src.persistencia", "src.servicios", "src.interfaz"),
+            "servicios": ("sqlite3", "tkinter", "customtkinter", "src.interfaz"),
+        }
+
+        for nombre_capa, prefijos_prohibidos in reglas_prohibidas.items():
+            carpeta = RAIZ_PROYECTO / "src" / nombre_capa
+            for archivo in carpeta.rglob("*.py"):
+                arbol = ast.parse(archivo.read_text(encoding="utf-8"), filename=str(archivo))
+                for nodo in ast.walk(arbol):
+                    modulos_importados = []
+                    if isinstance(nodo, ast.Import):
+                        modulos_importados.extend(alias.name for alias in nodo.names)
+                    elif isinstance(nodo, ast.ImportFrom) and nodo.module:
+                        modulos_importados.append(nodo.module)
+
+                    for mod in modulos_importados:
+                        for prohibido in prefijos_prohibidos:
+                            self.assertFalse(
+                                mod == prohibido or mod.startswith(f"{prohibido}."),
+                                f"Violación de capas en {archivo}: importa '{mod}' (prohibido en '{nombre_capa}')",
+                            )
+
+    def test_todas_las_entidades_de_dominio_exponen_metodo_validar(self) -> None:
+        """
+        Regla de GEMINI.md: Todas las entidades de `src/dominio/` deben exponer y
+        ejecutar `.validar()`.
+        """
+        entidades_dominio = [
+            Cliente,
+            Mascota,
+            HistoriaClinica,
+            VacunaAplicada,
+            Tratamiento,
+            ConsultaMedica,
+            OrdenDerivacion,
+            MuestraBiologica,
+            RegistroTrazabilidad,
+            ConservadoraIsotermica,
+            PrecintoSanitario,
+            RemitoBiologico,
+            EnvioLaboratorio,
+            ResultadoAnalisis,
+            ComprobanteAtencion,
+            DetalleComprobante,
+        ]
+        for clase in entidades_dominio:
+            self.assertTrue(
+                hasattr(clase, "validar") and callable(getattr(clase, "validar")),
+                f"La entidad {clase.__name__} no define el método público .validar()",
+            )
 
     def test_formateo_eventos_patron_observer_en_ui(self) -> None:
         mensaje_rechazo, color_rechazo = formatear_evento_notificacion(
@@ -107,10 +194,6 @@ class PruebaInterfazEtapa1(unittest.TestCase):
     def test_resaltado_campo_en_error_negocio_con_campo_asociado(self) -> None:
         """Verifica que excepciones de negocio con atributo .campo (ej. ErrorMascotaSinResponsable)
         resalten el widget del formulario en rojo mediante ejecutar_accion_segura."""
-        from unittest.mock import MagicMock
-        from src.dominio.excepciones import ErrorMascotaSinResponsable
-        from src.interfaz.componentes.alertas import COLOR_BORDE_ERROR
-
         widget_mock = MagicMock()
         mapa = {"cliente_id": widget_mock}
 
@@ -124,9 +207,6 @@ class PruebaInterfazEtapa1(unittest.TestCase):
 
     def test_control_zoom_dinamico_y_accesibilidad_en_app(self) -> None:
         """Verifica la lógica de zoom dinámico y adaptabilidad de VentanaPrincipal."""
-        from src.interfaz.app import VentanaPrincipal
-        from unittest.mock import MagicMock, patch
-
         srv_clinica = MagicMock()
         srv_logistica = MagicMock()
         srv_lab = MagicMock()

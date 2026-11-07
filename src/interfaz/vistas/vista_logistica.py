@@ -25,9 +25,7 @@ from typing import Any
 
 import customtkinter as ctk
 
-from src.dominio.excepciones import ErrorDatosInvalidos
 from src.dominio.logistica import RemitoBiologico
-from src.dominio.muestra_biologica import MuestraBiologica
 from src.interfaz.componentes.alertas import (
     confirmar_accion,
     ejecutar_accion_segura,

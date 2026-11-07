@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from src.dominio.consulta_medica import FORMATO_FECHA_HORA
+from src.dominio.consulta_medica import FORMATO_FECHA_HORA, OrdenDerivacion
 from src.dominio.excepciones import ErrorEntidadNoEncontrada, ErrorValidacionNegocio
 from src.dominio.facturacion import (
     ComprobanteAtencion,
@@ -252,6 +252,10 @@ class ServicioLaboratorio:
     def obtener_resultado_de_muestra(self, muestra_id: int) -> ResultadoAnalisis | None:
         """Devuelve el resultado de análisis cargado para una muestra, si existe."""
         return self.facturacion_dao.obtener_resultado_por_muestra(muestra_id)
+
+    def obtener_orden_derivacion(self, orden_id: int) -> OrdenDerivacion | None:
+        """Recupera la orden de derivación con el estudio solicitado y su costo base de catálogo."""
+        return self.consulta_dao.obtener_orden_por_id(orden_id)
 
     def obtener_comprobante_por_consulta(
         self, consulta_id: int

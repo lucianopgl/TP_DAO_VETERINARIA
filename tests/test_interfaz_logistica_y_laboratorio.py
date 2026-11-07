@@ -1,11 +1,11 @@
 """
-Pruebas Unitarias y de Integración: Interfaz Gráfica — Etapa 3
-=============================================================
+Pruebas Unitarias y de Integración: Vistas de Logística y Laboratorio (`src/interfaz/vistas/`)
+==============================================================================================
 
 Verifica:
     1. Regla arquitectónica de capas (AST): Prohibido importar `sqlite3` o
        acoplarse a `src.persistencia` desde `vista_logistica.py` o `vista_laboratorio.py`.
-    2. Proceso 4, 5 y 6 en `VistaLogistica`: Empaquetado, Despacho, Recepción con
+    2. Procesos 4, 5 y 6 en `VistaLogistica`: Empaquetado, Despacho, Recepción con
        verificación de precinto sanitario y recorrido con Patrón ITERATOR
        (`IteradorMuestras` e `IteradorMuestrasFiltradas`).
     3. Proceso 7 en `VistaLaboratorio`:
@@ -23,7 +23,6 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from src.dominio.logistica import ConservadoraIsotermica
 from src.interfaz.app import formatear_evento_notificacion
 from src.interfaz.vistas.vista_laboratorio import DESCRIPCION_ESTRATEGIAS, VistaLaboratorio
 from src.interfaz.vistas.vista_logistica import VistaLogistica
@@ -43,11 +42,11 @@ from src.servicios.servicio_logistica import ServicioLogistica
 RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
 
 
-class PruebaInterfazEtapa3(unittest.TestCase):
-    """Pruebas de arquitectura, patrones GoF y funcionamiento para las vistas de la Etapa 3."""
+class PruebaInterfazLogisticaYLaboratorio(unittest.TestCase):
+    """Pruebas de arquitectura, patrones GoF y funcionamiento para VistaLogistica y VistaLaboratorio."""
 
-    def test_regla_arquitectonica_vistas_etapa3_sin_sqlite_ni_daos(self) -> None:
-        """Ningún archivo de la Etapa 3 debe importar sqlite3 ni persistencia."""
+    def test_vistas_logistica_y_laboratorio_sin_dependencia_sqlite_ni_daos(self) -> None:
+        """Ninguna vista de logística o laboratorio debe importar sqlite3 ni persistencia."""
         archivos = [
             RAIZ_PROYECTO / "src" / "interfaz" / "vistas" / "vista_logistica.py",
             RAIZ_PROYECTO / "src" / "interfaz" / "vistas" / "vista_laboratorio.py",
@@ -120,7 +119,7 @@ class PruebaInterfazEtapa3(unittest.TestCase):
         self.assertIn("Análisis normal", msg_res)
         self.assertEqual(color_res, "#0F766E")
 
-    def test_integracion_real_vistas_etapa3_con_patrones_gof(self) -> None:
+    def test_integracion_vistas_logistica_y_laboratorio_con_patrones_gof(self) -> None:
         """
         Verifica con base de datos en memoria que VistaLogistica y VistaLaboratorio
         hidraten datos reales e invoquen los patrones Iterator, State, Strategy y Observer.
@@ -204,6 +203,9 @@ class PruebaInterfazEtapa3(unittest.TestCase):
             instance._txt_fecha_emision = MagicMock()
             instance._txt_costo_analisis = MagicMock()
             instance._txt_fecha_analisis = MagicMock()
+            instance._txt_valores_medidos = MagicMock()
+            instance._txt_conclusion = MagicMock()
+            instance._txt_obs_resultado = MagicMock()
             instance._chk_incluir_bloqueadas = MagicMock()
             instance._chk_incluir_bloqueadas.get.return_value = True
 
@@ -237,6 +239,16 @@ class PruebaInterfazEtapa3(unittest.TestCase):
             self.assertIn(1, vista_lab._muestras_recibidas_por_id)
             vista_lab._al_seleccionar_muestra_recibida("1")
             self.assertEqual(vista_lab._muestra_seleccionada_id, 1)
+            vista_lab._txt_valores_medidos.delete.assert_called_with("1.0", "end")
+            vista_lab._txt_conclusion.delete.assert_called_with("1.0", "end")
+            vista_lab._txt_obs_resultado.delete.assert_called_with(0, "end")
+
+            # Si se vuelve a hacer clic sobre la misma muestra #1, no debe sobrescribir el costo editado
+            vista_lab._txt_costo_analisis.delete.reset_mock()
+            vista_lab._txt_valores_medidos.delete.reset_mock()
+            vista_lab._al_seleccionar_muestra_recibida("1")
+            vista_lab._txt_costo_analisis.delete.assert_not_called()
+            vista_lab._txt_valores_medidos.delete.assert_not_called()
 
             # 2.5. Verificar que la tabla de muestras extraídas pendientes visualiza el estado 'Extraida'
             vista_log._recargar_muestras_extraidas_pendientes()

@@ -1,6 +1,6 @@
 """
-Servicio de Reportes Gerenciales y Estadísticos (Fase 4 - Paso 4.2)
-===================================================================
+Servicio de Reportes Gerenciales, Sanitarios y Estadísticos (`ServicioReportes`)
+================================================================================
 
 Centraliza la generación de los 5 reportes no triviales requeridos por el
 Trabajo Práctico Integrador (Tema 2: Veterinaria - Red de Clínicas y Derivación
@@ -19,9 +19,11 @@ Reportes implementados:
 from __future__ import annotations
 
 import csv
+from datetime import date
 from pathlib import Path
 from typing import Any
 
+from src.dominio.excepciones import ErrorDatosInvalidos
 from src.persistencia.conexion_bd import ConexionBD
 from src.persistencia.mascota_dao import MascotaDAO
 from src.persistencia.muestra_dao import MuestraDAO
@@ -37,6 +39,64 @@ class ServicioReportes:
         self._conexion = conexion or ConexionBD.obtener_instancia()
         self._mascota_dao = MascotaDAO(self._conexion)
         self._muestra_dao = MuestraDAO(self._conexion)
+
+    @staticmethod
+    def validar_fecha_iso(fecha: str | None, nombre_campo: str = "fecha") -> str | None:
+        """
+        Valida rigurosamente que una fecha opcional cumpla con:
+            1. Formato exacto AAAA-MM-DD (10 caracteres, 2 guiones y dígitos numéricos).
+            2. Rango de años permitido (1900 a 2100).
+            3. Existencia real en el calendario gregoriano (días válidos por mes y años bisiestos).
+        """
+        if fecha is None:
+            return None
+        limpio = str(fecha).strip()
+        if not limpio:
+            return None
+        partes = limpio.split("-")
+        if len(partes) != 3 or len(partes[0]) != 4 or len(partes[1]) != 2 or len(partes[2]) != 2:
+            raise ErrorDatosInvalidos(
+                nombre_campo,
+                f"La fecha '{limpio}' debe respetar el formato exacto AAAA-MM-DD (por ejemplo: 2026-03-15).",
+            )
+        if not (partes[0].isdigit() and partes[1].isdigit() and partes[2].isdigit()):
+            raise ErrorDatosInvalidos(
+                nombre_campo,
+                f"La fecha '{limpio}' contiene caracteres no permitidos. El año, mes y día deben contener únicamente dígitos numéricos.",
+            )
+
+        anio = int(partes[0])
+        mes = int(partes[1])
+        dia = int(partes[2])
+
+        if anio < 1900 or anio > 2100:
+            raise ErrorDatosInvalidos(
+                nombre_campo,
+                f"El año '{anio}' está fuera del rango permitido (1900 a 2100).",
+            )
+
+        try:
+            date(anio, mes, dia)
+        except ValueError:
+            raise ErrorDatosInvalidos(
+                nombre_campo,
+                f"La fecha '{limpio}' no existe en el calendario gregoriano "
+                f"(verifique que el mes esté entre 01 y 12 y que el día sea válido para dicho mes, ej: 2026-03-15).",
+            )
+
+        return limpio
+
+    @classmethod
+    def validar_rango_fechas(cls, fecha_desde: str | None, fecha_hasta: str | None) -> None:
+        """Valida que ambas fechas sean válidas en el calendario y que 'Desde' <= 'Hasta'."""
+        desde_limpio = cls.validar_fecha_iso(fecha_desde, "fecha_desde")
+        hasta_limpio = cls.validar_fecha_iso(fecha_hasta, "fecha_hasta")
+        if desde_limpio and hasta_limpio and desde_limpio > hasta_limpio:
+            raise ErrorDatosInvalidos(
+                "fecha_desde",
+                f"Inconsistencia en el rango de fechas: La fecha 'Desde' ({desde_limpio}) "
+                f"no puede ser posterior a la fecha 'Hasta' ({hasta_limpio}).",
+            )
 
     # ==================================================================================
     # REPORTE 1: Atenciones clínicas y derivaciones realizadas
@@ -58,6 +118,7 @@ class ServicioReportes:
             - 'resumen_por_clinica': Totales agrupados por sede veterinaria.
             - 'detalle_atenciones': Listado enriquecido de cada consulta y sus derivaciones.
         """
+        self.validar_rango_fechas(fecha_desde, fecha_hasta)
         condiciones: list[str] = []
         parametros: list[Any] = []
 
@@ -168,7 +229,9 @@ class ServicioReportes:
     # REPORTE 2: Muestras biológicas rechazadas por fallas en el transporte
     # ==================================================================================
 
-    def reporte_muestras_rechazadas_transporte(self) -> dict[str, Any]:
+    def reporte_muestras_rechazadas_transporte(
+        self, clinica_id: int | None = None
+    ) -> dict[str, Any]:
         """
         Genera el informe de auditoría de muestras biológicas rechazadas al arribar
         al laboratorio central debido a violación o rotura del precinto sanitario,
@@ -180,7 +243,7 @@ class ServicioReportes:
             - 'rechazos_por_clinica': Conteo agrupado por clínica emisora.
             - 'detalle_muestras': Listado completo con trazabilidad de remito, precinto, conservadora y transportista.
         """
-        detalle = self._muestra_dao.listar_muestras_rechazadas_con_transporte()
+        detalle = self._muestra_dao.listar_muestras_rechazadas_con_transporte(clinica_id=clinica_id)
 
         por_estado_precinto: dict[str, int] = {}
         por_clinica: dict[str, int] = {}
@@ -204,7 +267,9 @@ class ServicioReportes:
     # ==================================================================================
 
     def reporte_tratamientos_y_vacunas_pendientes(
-        self, fecha_referencia: str | None = None
+        self,
+        fecha_referencia: str | None = None,
+        clinica_id: int | None = None,
     ) -> dict[str, Any]:
         """
         Genera el reporte clínico-sanitario que consolida:
@@ -212,7 +277,10 @@ class ServicioReportes:
             2. El control epidemiológico de vacunas obligatorias pendientes o vencidas
                para todas las mascotas registradas en la red.
         """
-        sql_tratamientos = """
+        clausula_trat = "WHERE cl.id = ?" if clinica_id is not None else ""
+        params_trat = (clinica_id,) if clinica_id is not None else ()
+
+        sql_tratamientos = f"""
             SELECT
                 t.id AS tratamiento_id,
                 cm.fecha_hora_inicio AS fecha_consulta,
@@ -233,9 +301,10 @@ class ServicioReportes:
             JOIN mascotas m ON m.id = cm.mascota_id
             JOIN catalogo_especies ce ON ce.id = m.especie_id
             JOIN clientes cli ON cli.id = m.cliente_id
+            {clausula_trat}
             ORDER BY cm.fecha_hora_inicio DESC, t.id ASC
         """
-        filas_tratamientos = self._conexion.consultar_todos(sql_tratamientos)
+        filas_tratamientos = self._conexion.consultar_todos(sql_tratamientos, params_trat)
         tratamientos_aplicados = [
             {
                 "tratamiento_id": int(f["tratamiento_id"]),
@@ -255,19 +324,36 @@ class ServicioReportes:
         ]
 
         # Relevamiento de vacunas obligatorias pendientes/vencidas por mascota
-        sql_mascotas = """
-            SELECT
-                m.id AS mascota_id,
-                m.nombre AS mascota_nombre,
-                ce.nombre AS especie_nombre,
-                cli.apellido || ', ' || cli.nombre AS cliente_nombre,
-                cli.telefono AS cliente_telefono
-            FROM mascotas m
-            JOIN catalogo_especies ce ON ce.id = m.especie_id
-            JOIN clientes cli ON cli.id = m.cliente_id
-            ORDER BY m.nombre ASC
-        """
-        filas_mascotas = self._conexion.consultar_todos(sql_mascotas)
+        if clinica_id is not None:
+            sql_mascotas = """
+                SELECT DISTINCT
+                    m.id AS mascota_id,
+                    m.nombre AS mascota_nombre,
+                    ce.nombre AS especie_nombre,
+                    cli.apellido || ', ' || cli.nombre AS cliente_nombre,
+                    cli.telefono AS cliente_telefono
+                FROM mascotas m
+                JOIN catalogo_especies ce ON ce.id = m.especie_id
+                JOIN clientes cli ON cli.id = m.cliente_id
+                JOIN consultas_medicas cm ON cm.mascota_id = m.id
+                WHERE cm.clinica_id = ?
+                ORDER BY m.nombre ASC
+            """
+            filas_mascotas = self._conexion.consultar_todos(sql_mascotas, (clinica_id,))
+        else:
+            sql_mascotas = """
+                SELECT
+                    m.id AS mascota_id,
+                    m.nombre AS mascota_nombre,
+                    ce.nombre AS especie_nombre,
+                    cli.apellido || ', ' || cli.nombre AS cliente_nombre,
+                    cli.telefono AS cliente_telefono
+                FROM mascotas m
+                JOIN catalogo_especies ce ON ce.id = m.especie_id
+                JOIN clientes cli ON cli.id = m.cliente_id
+                ORDER BY m.nombre ASC
+            """
+            filas_mascotas = self._conexion.consultar_todos(sql_mascotas)
 
         vacunas_pendientes_detalle: list[dict[str, Any]] = []
         mascotas_con_pendientes = 0
@@ -310,6 +396,7 @@ class ServicioReportes:
         self,
         fecha_desde: str | None = None,
         fecha_hasta: str | None = None,
+        clinica_id: int | None = None,
     ) -> dict[str, Any]:
         """
         Genera el estado contable y financiero de los comprobantes emitidos,
@@ -317,6 +404,7 @@ class ServicioReportes:
         (Consultas, Estudios de Laboratorio, Tratamientos, Recargos y Bonificaciones)
         y por Estrategia de Tarifa aplicada (Patrón Strategy).
         """
+        self.validar_rango_fechas(fecha_desde, fecha_hasta)
         condiciones: list[str] = []
         parametros: list[Any] = []
 
@@ -326,6 +414,9 @@ class ServicioReportes:
         if fecha_hasta:
             condiciones.append("substr(c.fecha_hora_emision, 1, 10) <= ?")
             parametros.append(fecha_hasta)
+        if clinica_id is not None:
+            condiciones.append("cm.clinica_id = ?")
+            parametros.append(clinica_id)
 
         clausula_where = f"WHERE {' AND '.join(condiciones)}" if condiciones else ""
 
@@ -371,6 +462,7 @@ class ServicioReportes:
                 COUNT(c.id) AS cantidad_comprobantes,
                 COALESCE(SUM(c.monto_total), 0.0) AS total_facturado
             FROM comprobantes c
+            JOIN consultas_medicas cm ON cm.id = c.consulta_id
             {clausula_where}
             GROUP BY c.estrategia_tarifa
             ORDER BY total_facturado DESC
@@ -405,7 +497,9 @@ class ServicioReportes:
     # REPORTE 5: Tiempo promedio de tránsito y procesamiento de muestras
     # ==================================================================================
 
-    def reporte_tiempos_transito_y_procesamiento(self) -> dict[str, Any]:
+    def reporte_tiempos_transito_y_procesamiento(
+        self, clinica_id: int | None = None
+    ) -> dict[str, Any]:
         """
         Calcula indicadores de desempeño logístico y bioquímico (SLA) a partir de las
         marcas de tiempo ISO-8601 (utilizando julian day `julianday()` en SQLite):
@@ -417,7 +511,10 @@ class ServicioReportes:
         Devuelve métricas globales, promedios agrupados por clínica de origen y
         el detalle cronológico de cada muestra procesada o recibida.
         """
-        sql_tiempos = """
+        clausula_clinica = "AND cl.id = ?" if clinica_id is not None else ""
+        parametros = (clinica_id,) if clinica_id is not None else ()
+
+        sql_tiempos = f"""
             SELECT
                 mb.id AS muestra_id,
                 mb.codigo_muestra,
@@ -448,10 +545,10 @@ class ServicioReportes:
             LEFT JOIN remitos_biologicos rb ON rb.id = mb.remito_id
             LEFT JOIN envios_laboratorio el ON el.remito_id = rb.id
             LEFT JOIN resultados_analisis ra ON ra.muestra_id = mb.id
-            WHERE el.fecha_hora_despacho IS NOT NULL
+            WHERE el.fecha_hora_despacho IS NOT NULL {clausula_clinica}
             ORDER BY mb.fecha_hora_extraccion DESC
         """
-        filas = self._conexion.consultar_todos(sql_tiempos)
+        filas = self._conexion.consultar_todos(sql_tiempos, parametros)
 
         detalle_muestras: list[dict[str, Any]] = []
         transitos_validos: list[float] = []
@@ -564,3 +661,73 @@ class ServicioReportes:
                     escritor.writerow(fila)
 
         return destino
+
+    def exportar_paquete_completo_csv(
+        self,
+        directorio_destino: str | Path,
+        fecha_desde: str | None = None,
+        fecha_hasta: str | None = None,
+        clinica_id: int | None = None,
+    ) -> dict[str, Path]:
+        """
+        Exporta los 5 reportes analíticos completos a un directorio de destino,
+        generando archivos CSV independientes para cada dimensión y nivel de detalle.
+
+        Retorna un diccionario {nombre_descriptivo: ruta_path_archivo}.
+        """
+        destino = Path(directorio_destino)
+        destino.mkdir(parents=True, exist_ok=True)
+        archivos_generados: dict[str, Path] = {}
+
+        # 1. Atenciones y Derivaciones
+        r1 = self.reporte_atenciones_y_derivaciones(fecha_desde, fecha_hasta, clinica_id)
+        if r1.get("resumen_por_clinica"):
+            archivos_generados["1. Atenciones (Resumen por Clínica)"] = self.exportar_a_csv(
+                r1["resumen_por_clinica"], destino / "1_atenciones_resumen_clinica.csv"
+            )
+        if r1.get("detalle_atenciones"):
+            archivos_generados["1. Atenciones (Detalle de Consultas)"] = self.exportar_a_csv(
+                r1["detalle_atenciones"], destino / "1_atenciones_detalle_consultas.csv"
+            )
+
+        # 2. Muestras Rechazadas en Transporte
+        r2 = self.reporte_muestras_rechazadas_transporte(clinica_id=clinica_id)
+        if r2.get("detalle_muestras"):
+            archivos_generados["2. Muestras Rechazadas (Trazabilidad Transporte)"] = self.exportar_a_csv(
+                r2["detalle_muestras"], destino / "2_muestras_rechazadas_transporte.csv"
+            )
+
+        # 3. Tratamientos y Vacunas
+        r3 = self.reporte_tratamientos_y_vacunas_pendientes(fecha_referencia=fecha_hasta, clinica_id=clinica_id)
+        if r3.get("vacunas_pendientes"):
+            archivos_generados["3. Vacunas Obligatorias Pendientes"] = self.exportar_a_csv(
+                r3["vacunas_pendientes"], destino / "3_vacunas_obligatorias_pendientes.csv"
+            )
+        if r3.get("tratamientos_aplicados"):
+            archivos_generados["3. Tratamientos Farmacológicos Prescriptos"] = self.exportar_a_csv(
+                r3["tratamientos_aplicados"], destino / "3_tratamientos_prescriptos.csv"
+            )
+
+        # 4. Facturación Desglosada
+        r4 = self.reporte_facturacion_desglosada(fecha_desde, fecha_hasta, clinica_id=clinica_id)
+        if r4.get("desglose_por_clinica"):
+            archivos_generados["4. Facturación (Desglose por Clínica)"] = self.exportar_a_csv(
+                r4["desglose_por_clinica"], destino / "4_facturacion_por_clinica.csv"
+            )
+        if r4.get("desglose_por_estrategia"):
+            archivos_generados["4. Facturación (Desglose por Estrategia)"] = self.exportar_a_csv(
+                r4["desglose_por_estrategia"], destino / "4_facturacion_por_estrategia.csv"
+            )
+
+        # 5. Tiempos de Tránsito y SLA
+        r5 = self.reporte_tiempos_transito_y_procesamiento(clinica_id=clinica_id)
+        if r5.get("promedios_por_clinica"):
+            archivos_generados["5. SLA Logístico (Promedios por Clínica)"] = self.exportar_a_csv(
+                r5["promedios_por_clinica"], destino / "5_sla_promedios_por_clinica.csv"
+            )
+        if r5.get("detalle_tiempos_muestras"):
+            archivos_generados["5. SLA Logístico (Detalle por Muestra)"] = self.exportar_a_csv(
+                r5["detalle_tiempos_muestras"], destino / "5_sla_detalle_muestras.csv"
+            )
+
+        return archivos_generados

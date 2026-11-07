@@ -1,6 +1,6 @@
 """
-Pruebas de Integración: Capa de Servicios de Negocio (Fase 4 - Paso 4.1)
-========================================================================
+Pruebas de Integración: Capa de Servicios de Negocio (`src/servicios/`)
+=======================================================================
 
 Verifica de punta a punta los 7 Procesos de Negocio Obligatorios y todas las
 Validaciones de Negocio orquestadas por:
@@ -12,7 +12,6 @@ Validaciones de Negocio orquestadas por:
 import unittest
 
 from src.dominio.excepciones import (
-    ErrorCapacidadConservadoraExcedida,
     ErrorClinicaNoCoincide,
     ErrorMascotaSinResponsable,
     ErrorSuperposicionTurno,
@@ -20,10 +19,7 @@ from src.dominio.excepciones import (
     ErrorVacunaObligatoriaFaltante,
 )
 from src.dominio.historia_clinica import Tratamiento
-from src.patrones.estrategia_facturacion import (
-    TarifaConvenioRed,
-    TarifaUrgenciaLaboratorio,
-)
+from src.patrones.estrategia_facturacion import TarifaUrgenciaLaboratorio
 from src.patrones.observador_eventos import ObservadorAuditoria, SujetoEventos
 from src.persistencia.conexion_bd import RUTA_BD_EN_MEMORIA, ConexionBD
 from src.persistencia.inicializador_bd import inicializar_base_datos

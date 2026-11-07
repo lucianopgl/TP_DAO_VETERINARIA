@@ -1,6 +1,6 @@
 """
-Pruebas del Servicio de Reportes (Fase 4 - Paso 4.2)
-====================================================
+Pruebas del Servicio de Reportes Gerenciales, Sanitarios y Exportación CSV
+==========================================================================
 
 Verifica la exactitud estadística, el filtrado y la exportación CSV de los
 5 reportes gerenciales y sanitarios no triviales:
@@ -261,6 +261,14 @@ class PruebaServicioReportes(unittest.TestCase):
                 lector = list(csv.DictReader(f))
             self.assertEqual(len(lector), 1)
             self.assertEqual(lector[0]["codigo_muestra"], "MUE-REP-RECH")
+
+    def test_exportar_paquete_completo_csv(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            archivos = self.srv_reportes.exportar_paquete_completo_csv(tmp_dir)
+            self.assertGreaterEqual(len(archivos), 5)
+            for nombre, path in archivos.items():
+                self.assertTrue(path.exists(), f"El archivo {path} no fue creado")
+                self.assertTrue(path.name.endswith(".csv"))
 
 
 if __name__ == "__main__":

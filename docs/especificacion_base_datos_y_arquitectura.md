@@ -10,54 +10,77 @@
 ## 1. Diagnóstico del Estado y Estructura del Proyecto
 
 ### 1.1. ¿Está completa la estructura del proyecto?
-**Resumen ejecutivo:** La estructura arquitectónica de **Dominio**, **Patrones de Diseño**, **Persistencia (DAO / SQL)** y **Pruebas Automatizadas** está **100% desarrollada, robusta y con 52 tests pasando con éxito (0.26s)**. Sin embargo, el proyecto general **aún no está completo en su totalidad** para la entrega final: faltan por implementar la capa de **Servicios** (orquestación de casos de uso y los 4 reportes no triviales) y la capa de **Interfaz Gráfica** (`CustomTkinter`), además del archivo de arranque principal (`main.py`).
+**Resumen ejecutivo:** El proyecto se encuentra **100% completo, auditado y verificado** en sus **5 capas arquitectónicas** (`dominio`, `patrones`, `persistencia`, `servicios`, `interfaz`) más su punto de entrada (`main.py`) y su suite de **9 módulos de pruebas automatizadas** con nomenclatura semántica de dominio. Cumple la totalidad de los requisitos del Trabajo Práctico Integrador 2026 (7 procesos de negocio, todas las validaciones de dominio y persistencia, 5 reportes gerenciales/sanitarios no triviales con exportación individual y por lote a CSV, y los patrones GoF **State**, **Strategy**, **Iterator**, **Observer** + **Singleton** y **DAO**).
 
 ### 1.2. Árbol de Directorios y Estado de Implementación
 
 ```text
 proyecto_veterinaria/
 ├── .gitignore
-├── requirements.txt            # customtkinter>=5.2, pypdf (librerías externas)
-├── veterinaria.db              # Base de datos SQLite física generada
-├── docs/                       # Consignas de cátedra, guías DAO y teóricos
+├── GEMINI.md                   # Reglas arquitectónicas, SOLID, GRASP y Clean Code del proyecto
+├── main.py                     # [COMPLETO] Punto de entrada: inicializa BD, servicios, Observer y GUI
+├── requirements.txt            # customtkinter>=5.2, pytest (dependencias del entorno)
+├── veterinaria.db              # Base de datos SQLite física generada automáticamente
+├── docs/                       # Consignas de cátedra y documentación técnica oficial
 │   ├── TRABAJOPRACTICO.pdf     # Enunciado oficial del TP Integrador 2026
-│   ├── DB Guia Objetos de Acceso.docx
-│   └── especificacion_base_datos_y_arquitectura.md # Este documento técnico
+│   ├── diagrama_de_clases_y_diseno_poo.md          # Diagramas UML de las 5 capas y fundamentación POO
+│   └── especificacion_base_datos_y_arquitectura.md # Especificación DER, diccionario de 26 tablas y arquitectura
 ├── src/
 │   ├── __init__.py
-│   ├── dominio/                # [COMPLETO] Entidades, dataclasses y validaciones de negocio
+│   ├── dominio/                # [COMPLETO] Entidades de negocio puras y validaciones (.validar())
 │   │   ├── cliente.py          # Entidad Cliente
 │   │   ├── mascota.py          # Entidad Mascota (regla: responsable obligatorio)
-│   │   ├── historia_clinica.py # Historia clínica, Tratamientos, Vacunas aplicadas
-│   │   ├── consulta_medica.py  # Consulta médica y Órdenes de derivación
-│   │   ├── muestra_biologica.py# Muestra biológica y transiciones de estado
-│   │   ├── logistica.py        # Conservadoras, Precintos, Remitos y Envíos
-│   │   ├── facturacion.py      # Comprobantes, Detalle y Resultados de laboratorio
-│   │   └── excepciones.py      # Jerarquía de excepciones semánticas de negocio
-│   ├── patrones/               # [COMPLETO] Patrones GoF implementados
-│   │   ├── estado_muestra.py   # Patrón STATE: Extraída -> Empaquetada -> EnTránsito -> Recibida -> Analizada / Rechazada
-│   │   ├── estrategia_facturacion.py # Patrón STRATEGY: Tarifas (Estándar, Convenio Red, Urgencia)
-│   │   └── iterador_muestras.py# Patrón ITERATOR: Recorrido de muestras en conservadora
-│   ├── persistencia/           # [COMPLETO] Capa DAO y motor relacional
-│   │   ├── esquema.sql         # DDL de 26 tablas STRICT, constraints nombrados, índices y triggers
-│   │   ├── conexion_bd.py      # SINGLETON: Gestión de conexión SQLite, transacciones atómicas
-│   │   ├── inicializador_bd.py # DDL loader y precarga de catálogos paramétricos (idempotente)
-│   │   ├── traductor_errores.py# Mapeador de SQLite Error/IntegrityError -> Excepciones de Dominio
-│   │   ├── dao_base.py         # Clase abstracta base DAO
-│   │   ├── cliente_dao.py      # CRUD y búsquedas de Cliente
-│   │   ├── mascota_dao.py      # CRUD de Mascota e Historia Clínica
-│   │   ├── consulta_dao.py     # Consultas médicas, tratamientos y órdenes
-│   │   ├── logistica_dao.py    # Remitos, conservadoras, precintos y envíos
-│   │   ├── muestra_dao.py      # Muestras biológicas y trazabilidad inmutable
-│   │   └── facturacion_dao.py  # Resultados de laboratorio y Comprobantes cabecera-detalle
-│   ├── servicios/              # [PENDIENTE] Solo contiene docstring en __init__.py
-│   │   └── (Requiere: orquestación de casos de uso 1 a 7, validación horaria de agenda y reportes)
-│   └── interfaz/               # [PENDIENTE] Solo contiene docstring en __init__.py
-│       └── (Requiere: formularios y pantallas CustomTkinter conectadas a servicios)
-└── tests/                      # [COMPLETO] Cobertura automatizada (57/57 tests pasados)
-    ├── test_persistencia_base.py # Tests de conexión Singleton, constraints y triggers
-    ├── test_dominio_y_patrones.py # Tests de State, Strategy, Iterator y entidades
-    └── test_daos.py            # Tests de integración DAO contra SQLite en memoria
+│   │   ├── historia_clinica.py # HistoriaClinica (experto en vacunas pendientes), Tratamiento, VacunaAplicada
+│   │   ├── consulta_medica.py  # ConsultaMedica (experto en solapamiento horario) y OrdenDerivacion
+│   │   ├── muestra_biologica.py# MuestraBiologica y RegistroTrazabilidad inmutable (frozen=True)
+│   │   ├── logistica.py        # ConservadoraIsotermica, PrecintoSanitario, RemitoBiologico y EnvioLaboratorio
+│   │   ├── facturacion.py      # ComprobanteAtencion, DetalleComprobante y ResultadoAnalisis
+│   │   └── excepciones.py      # Jerarquía de excepciones tipadas con raíz en ErrorVeterinaria
+│   ├── patrones/               # [COMPLETO] Patrones de Diseño GoF
+│   │   ├── estado_muestra.py   # Patrón STATE: Extraida -> Empaquetada -> EnTransito -> Recibida -> Analizada | Rechazada
+│   │   ├── estrategia_facturacion.py # Patrón STRATEGY: TarifaEstandar, TarifaUrgenciaLaboratorio, TarifaConvenioRed
+│   │   ├── iterador_muestras.py# Patrón ITERATOR: IteradorMuestras e IteradorMuestrasFiltradas
+│   │   └── observador_eventos.py # Patrón OBSERVER: Observador, SujetoEventos y ObservadorAuditoria
+│   ├── persistencia/           # [COMPLETO] Capa DAO y motor relacional SQLite
+│   │   ├── esquema.sql         # DDL de 26 tablas STRICT, constraints nombrados, índices y triggers de inmutabilidad
+│   │   ├── conexion_bd.py      # SINGLETON: Gestión de conexión SQLite y unidad de trabajo transaccional
+│   │   ├── inicializador_bd.py # Cargador DDL y precarga idempotente de catálogos paramétricos
+│   │   ├── traductor_errores.py# Traductor de errores de SQLite a ErrorIntegridadDatos / ErrorPersistencia
+│   │   ├── dao_base.py         # Clase abstracta base DAOBase
+│   │   ├── cliente_dao.py      # Acceso a datos de Cliente
+│   │   ├── mascota_dao.py      # Acceso a datos de Mascota, HistoriaClinica y VacunaAplicada
+│   │   ├── consulta_dao.py     # Acceso a datos de ConsultaMedica, Tratamiento y OrdenDerivacion
+│   │   ├── logistica_dao.py    # Acceso a datos de ConservadoraIsotermica, PrecintoSanitario, RemitoBiologico y EnvioLaboratorio
+│   │   ├── muestra_dao.py      # Acceso a datos de MuestraBiologica e historial inmutable
+│   │   └── facturacion_dao.py  # Acceso a datos de ResultadoAnalisis y ComprobanteAtencion (cabecera-detalle)
+│   ├── servicios/              # [COMPLETO] Orquestación de Casos de Uso (Procesos 1 a 7) y Reportes
+│   │   ├── servicio_clinica.py # Procesos 1 (Clientes), 2 (Mascotas e H. Clínica) y 3 (Consultas, Órdenes y Extracción)
+│   │   ├── servicio_logistica.py # Procesos 4 (Empaquetado), 5 (Despacho) y 6 (Recepción y control de precinto)
+│   │   ├── servicio_laboratorio.py # Proceso 7 (Resultados bioquímicos con State y Facturación con Strategy)
+│   │   └── servicio_reportes.py# Los 5 reportes gerenciales/sanitarios no triviales y exportación CSV
+│   └── interfaz/               # [COMPLETO] Presentación gráfica desacoplada en CustomTkinter
+│       ├── app.py              # VentanaPrincipal (observador en vivo de SujetoEventos y control de zoom dinámico)
+│       ├── tema.py             # Paleta corporativa, tipografías y estilos centralizados
+│       ├── componentes/
+│       │   ├── alertas.py      # Manejador centralizado ejecutar_accion_segura y resaltado de campos inválidos
+│       │   └── tabla_datos.py  # Componente reutilizable TablaDatos (ttk.Treeview estilizado)
+│       └── vistas/
+│           ├── vista_clientes.py    # Vista Proceso 1: Gestión de Clientes y búsqueda en vivo
+│           ├── vista_mascotas.py    # Vista Proceso 2: Mascotas, Historia Clínica 1:1 y Vacunación
+│           ├── vista_consultas.py   # Vista Proceso 3: Consultas Médicas, Derivaciones y Extracción de Muestras
+│           ├── vista_logistica.py   # Vista Procesos 4, 5 y 6: Empaquetado, Despacho, Recepción e Iterator
+│           ├── vista_laboratorio.py # Vista Proceso 7: Informe Bioquímico (State) y Facturación (Strategy)
+│           └── vista_reportes.py    # Vista de los 5 Reportes con tarjetas KPI y exportación CSV
+└── tests/                      # [COMPLETO] Suite integral de pruebas automatizadas (89 tests)
+    ├── test_persistencia_base.py                        # Singleton, unidad de trabajo, constraints STRICT y triggers
+    ├── test_dominio_y_patrones.py                       # Entidades de dominio y patrones State, Strategy, Iterator, Observer
+    ├── test_daos.py                                     # Integración de los 6 DAOs contra SQLite en memoria
+    ├── test_trazabilidad_e_historia_clinica.py          # Ciclo de vida de remitos, vacunas pendientes y rechazos con transporte
+    ├── test_servicios_negocio.py                        # Orquestación de punta a punta de los Procesos 1 a 7
+    ├── test_reportes.py                                 # Exactitud estadística de los 5 reportes y exportación CSV
+    ├── test_interfaz_arquitectura_y_ventana_principal.py# Auditoría AST de capas, método .validar() y ventana principal
+    ├── test_interfaz_logistica_y_laboratorio.py         # Integración de vistas de logística y laboratorio con patrones GoF
+    └── test_interfaz_reportes_y_csv.py                  # Integración de vista de reportes, validación de fechas y CSV
 ```
 
 ---
@@ -760,19 +783,19 @@ END;
 
 ---
 
-## 7. Plan de Acción para Completar el Proyecto
-
-Para dejar el proyecto listo para la presentación con el profesor:
+## 7. Arquitectura de Servicios, Interfaz Gráfica y Verificación Integral
 
 1. **Capa de Servicios (`src/servicios/`):**
-   - Implementar los flujos de los procesos 1 al 7 coordinando los DAOs en transacciones atómicas.
-   - Implementar la validación de superposición horaria para veterinarios (`fecha_hora_inicio` + `duracion_minutos`).
-   - Implementar los 4 reportes obligatorios:
+   - `ServicioClinica`, `ServicioLogistica` y `ServicioLaboratorio` orquestan los Procesos 1 al 7 delegando todo acceso SQL en los objetos DAO dentro de bloques `with self.conexion.transaccion():`.
+   - `ServicioReportes` implementa los **5 reportes gerenciales y sanitarios no triviales** y provee validación estricta de fechas ISO 8601 (`validar_fecha_iso`, `validar_rango_fechas`) y exportación tanto individual (`exportar_a_csv`) como del paquete completo (`exportar_paquete_completo_csv`):
      1. Atenciones clínicas y derivaciones realizadas por período y clínica.
-     2. Muestras rechazadas clasificadas por causas logísticas / precinto.
-     3. Tratamientos aplicados y vacunas pendientes por mascota.
-     4. Facturación desglosada por clínica, laboratorio y tipo de concepto.
+     2. Muestras biológicas rechazadas clasificadas por causas logísticas / precinto y conservadora.
+     3. Tratamientos aplicados y vacunas obligatorias pendientes o vencidas por mascota.
+     4. Facturación desglosada por clínica, laboratorio, estrategia GoF Strategy y tipo de concepto.
+     5. Tiempo promedio (SLA en horas) de espera en clínica, tránsito logístico y procesamiento en laboratorio.
 2. **Capa de Interfaz Gráfica (`src/interfaz/`):**
-   - Diseñar las vistas con `CustomTkinter` consumiendo exclusivamente la capa de servicios.
-3. **Punto de Entrada (`main.py`):**
-   - Inicializar la base de datos de manera transparente y levantar la ventana principal.
+   - Construida con `CustomTkinter` en 6 vistas modulares (`VistaClientes`, `VistaMascotas`, `VistaConsultas`, `VistaLogistica`, `VistaLaboratorio`, `VistaReportes`) desacopladas de SQLite y de los DAOs.
+   - Incluye control de zoom dinámico en `VentanaPrincipal` (`75%` a `130%` y atajos `Ctrl +` / `Ctrl -` / `Ctrl 0`) y suscripción en tiempo real a `SujetoEventos` (Patrón Observer).
+3. **Punto de Entrada (`main.py`) y Suite de Pruebas (`tests/`):**
+   - `python main.py` inicializa de manera idempotente `veterinaria.db`, inyecta dependencias y lanza la interfaz gráfica.
+   - `pytest` ejecuta las 89 pruebas automatizadas sobre bases `:memory:` verificando reglas de negocio, persistencia y cumplimiento arquitectónico AST.

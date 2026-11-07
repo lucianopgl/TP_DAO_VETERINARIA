@@ -1,6 +1,6 @@
 """
-Pruebas Unitarias: Capa de Dominio y Patrones de Diseño GoF (Fase 3 - Paso 2)
-=============================================================================
+Pruebas Unitarias: Capa de Dominio y Patrones de Diseño GoF
+===========================================================
 
 Cubre:
     1. Patrón State: Ciclo de vida inmutable de MuestraBiologica.
@@ -31,7 +31,6 @@ from src.dominio.excepciones import (
     ErrorDatosInvalidos,
     ErrorMascotaSinResponsable,
     ErrorTransicionEstadoInvalida,
-    ErrorValidacionNegocio,
 )
 from src.patrones.estrategia_facturacion import (
     TarifaConvenioRed,

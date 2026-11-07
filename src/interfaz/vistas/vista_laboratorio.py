@@ -27,7 +27,6 @@ from typing import Any
 import customtkinter as ctk
 
 from src.dominio.consulta_medica import FORMATO_FECHA_HORA, ConsultaMedica
-from src.dominio.excepciones import ErrorDatosInvalidos
 from src.dominio.facturacion import ComprobanteAtencion, ResultadoAnalisis
 from src.dominio.muestra_biologica import MuestraBiologica
 from src.interfaz.componentes.alertas import (
@@ -179,9 +178,11 @@ class VistaLaboratorio(ctk.CTkFrame):
         self._mapa_campos_resultado["profesional_laboratorio_id"] = self._combo_bioquimico
         fila += 1
 
-        ctk.CTkLabel(panel_izq, text="Costo del Análisis ($) *:", font=ctk.CTkFont(size=12, weight="bold")).grid(
-            row=fila, column=0, sticky="w", padx=12, pady=(4, 2)
-        )
+        ctk.CTkLabel(
+            panel_izq,
+            text="Costo del Análisis ($ — sugerido por estudio, editable) *:",
+            font=ctk.CTkFont(size=12, weight="bold"),
+        ).grid(row=fila, column=0, sticky="w", padx=12, pady=(4, 2))
         fila += 1
         self._txt_costo_analisis = ctk.CTkEntry(panel_izq, placeholder_text="Ej: 4500.00")
         self._txt_costo_analisis.grid(row=fila, column=0, sticky="ew", padx=12, pady=(0, 6))
@@ -744,6 +745,8 @@ class VistaLaboratorio(ctk.CTkFrame):
             muestra_id = int(seleccion["id"])
         else:
             muestra_id = int(seleccion)
+
+        cambio_de_muestra = self._muestra_seleccionada_id != muestra_id
         self._muestra_seleccionada_id = muestra_id
 
         m = self._muestras_recibidas_por_id.get(muestra_id)
@@ -766,35 +769,49 @@ class VistaLaboratorio(ctk.CTkFrame):
             estado_txt = "Recibida"
             motivo_txt = ""
 
+        # Consultar el estudio y costo base del catálogo definido en la Orden de Derivación
+        costo_sugerido = "4500.00"
+        estudio_txt = ""
+        if orden_id:
+            try:
+                orden = self._srv_lab.obtener_orden_derivacion(orden_id)
+                if orden is not None:
+                    costo_sugerido = f"{orden.costo_base:.2f}"
+                    if orden.nombre_estudio:
+                        estudio_txt = f" ({orden.nombre_estudio} — Base: ${orden.costo_base:.2f})"
+            except Exception:
+                pass
+
         self._lbl_info_muestra_titulo.configure(
             text=f"Muestra: {codigo} (ID #{muestra_id} - {tipo})"
         )
         self._lbl_info_muestra_detalle.configure(
-            text=f"Orden de derivación #{orden_id} | Estado actual (Patrón State): {estado_txt}{motivo_txt}"
+            text=f"Orden #{orden_id}{estudio_txt} | Estado actual (Patrón State): {estado_txt}{motivo_txt}"
         )
 
-        # Sugerir costo base de la orden si se puede consultar
-        costo_sugerido = ""
-        try:
-            for c in self._consultas_por_id.values():
-                for o in c.ordenes:
-                    if o.id == orden_id:
-                        costo_sugerido = f"{o.costo_base:.2f}"
-                        break
-        except Exception:
-            pass
+        # Al cambiar de muestra elegida, limpiar los campos del informe previo y cargar su costo base
+        if cambio_de_muestra:
+            if "_txt_valores_medidos" in self.__dict__:
+                self._txt_valores_medidos.delete("1.0", "end")
+            if "_txt_conclusion" in self.__dict__:
+                self._txt_conclusion.delete("1.0", "end")
+            if "_txt_obs_resultado" in self.__dict__:
+                self._txt_obs_resultado.delete(0, "end")
+            if "_tabla_analizadas" in self.__dict__:
+                self._tabla_analizadas.deseleccionar()
 
-        self._txt_costo_analisis.delete(0, "end")
-        if costo_sugerido:
+            self._txt_costo_analisis.delete(0, "end")
             self._txt_costo_analisis.insert(0, costo_sugerido)
-        else:
-            self._txt_costo_analisis.insert(0, "4500.00")
 
-        self._txt_fecha_analisis.delete(0, "end")
-        self._txt_fecha_analisis.insert(0, datetime.now().strftime(FORMATO_FECHA_HORA))
+            self._txt_fecha_analisis.delete(0, "end")
+            self._txt_fecha_analisis.insert(0, datetime.now().strftime(FORMATO_FECHA_HORA))
 
     def _al_seleccionar_muestra_analizada(self, seleccion: Any) -> None:
         """Muestra la información técnica del resultado ya emitido."""
+        self._muestra_seleccionada_id = None
+        if "_tabla_recibidas" in self.__dict__:
+            self._tabla_recibidas.deseleccionar()
+
         if isinstance(seleccion, dict):
             muestra_id = int(seleccion["id"])
             codigo_muestra = str(seleccion.get("codigo", f"#{muestra_id}"))
@@ -824,7 +841,11 @@ class VistaLaboratorio(ctk.CTkFrame):
         if consulta_id is None:
             return
         self._consulta_seleccionada_id = consulta_id
-        consulta = self._consultas_por_id.get(consulta_id)
+        try:
+            consulta = self._srv_clinica.obtener_consulta(consulta_id)
+            self._consultas_por_id[consulta_id] = consulta
+        except Exception:
+            consulta = self._consultas_por_id.get(consulta_id)
         if not consulta:
             return
 

@@ -205,6 +205,17 @@ class LogisticaDAO(DAOBase):
         filas = self.conexion.consultar_todos(sql)
         return [self._mapear_remito(f) for f in filas]
 
+    def obtener_historial_remito(self, remito_id: int) -> list[dict]:
+        """Recupera la cadena completa e inmutable de transiciones de estado del remito."""
+        sql = """
+            SELECT id, remito_id, estado_anterior, estado_nuevo, fecha_hora, observacion
+            FROM historial_estados_remito
+            WHERE remito_id = ?
+            ORDER BY id ASC
+        """
+        filas = self.conexion.consultar_todos(sql, (remito_id,))
+        return [dict(f) for f in filas]
+
     def listar_laboratorios(self) -> list[dict]:
         """Devuelve los laboratorios centrales registrados en la red."""
         filas = self.conexion.consultar_todos(
@@ -226,6 +237,7 @@ class LogisticaDAO(DAOBase):
 
     def crear_envio(self, envio: EnvioLaboratorio) -> int:
         """Registra el despacho físico de un remito con su transportista asignado."""
+        envio.validar()
         sql = """
             INSERT INTO envios_laboratorio (
                 remito_id, transportista_id, fecha_hora_despacho,

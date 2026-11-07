@@ -25,6 +25,7 @@ from src.interfaz.vistas.vista_consultas import VistaConsultas
 from src.interfaz.vistas.vista_laboratorio import VistaLaboratorio
 from src.interfaz.vistas.vista_logistica import VistaLogistica
 from src.interfaz.vistas.vista_mascotas import VistaMascotas
+from src.interfaz.vistas.vista_reportes import VistaReportes
 from src.patrones.observador_eventos import Observador, SujetoEventos
 from src.servicios.servicio_clinica import ServicioClinica
 from src.servicios.servicio_laboratorio import ServicioLaboratorio
@@ -293,39 +294,11 @@ class VentanaPrincipal(ctk.CTk, Observador):
             servicio_laboratorio=self._srv_laboratorio,
             servicio_clinica=self._srv_clinica,
         )
-
-        # Vista de la Etapa 4 (se habilitará en el próximo paso)
-        etapas_pendientes = {
-            "reportes": (
-                "Reportes Gerenciales y Sanitarios + Exportación CSV",
-                "Se implementará en la Etapa 4 tras validar la Etapa 3.",
-            ),
-        }
-        for clave, (titulo, descripcion) in etapas_pendientes.items():
-            self._vistas[clave] = self._crear_panel_etapa_futura(titulo, descripcion)
-
-    def _crear_panel_etapa_futura(self, titulo: str, subtitulo: str) -> ctk.CTkFrame:
-        """Crea un panel informativo limpio para las vistas programadas en etapas siguientes."""
-        marco = ctk.CTkFrame(self._contenedor_central, corner_radius=12)
-        marco.grid_rowconfigure(0, weight=1)
-        marco.grid_columnconfigure(0, weight=1)
-
-        interior = ctk.CTkFrame(marco, fg_color="transparent")
-        interior.grid(row=0, column=0, padx=30, pady=30)
-
-        ctk.CTkLabel(
-            interior,
-            text=titulo,
-            font=ctk.CTkFont(size=20, weight="bold"),
-        ).pack(pady=(0, 10))
-
-        ctk.CTkLabel(
-            interior,
-            text=subtitulo,
-            font=ctk.CTkFont(size=14),
-            text_color=("gray35", "gray70"),
-        ).pack()
-        return marco
+        self._vistas["reportes"] = VistaReportes(
+            self._contenedor_central,
+            servicio_reportes=self._srv_reportes,
+            servicio_clinica=self._srv_clinica,
+        )
 
     # ==================================================================================
     # Navegación entre Vistas

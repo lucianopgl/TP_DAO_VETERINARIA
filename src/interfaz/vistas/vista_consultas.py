@@ -25,7 +25,7 @@ from typing import Any
 
 import customtkinter as ctk
 
-from src.dominio.consulta_medica import FORMATO_FECHA_HORA, ConsultaMedica, OrdenDerivacion
+from src.dominio.consulta_medica import ConsultaMedica
 from src.dominio.excepciones import ErrorDatosInvalidos
 from src.dominio.historia_clinica import Tratamiento
 from src.dominio.muestra_biologica import MuestraBiologica

@@ -288,12 +288,16 @@ class MuestraDAO(DAOBase):
             )
         return [self._mapear_fila(f, historiales_por_muestra.get(int(f["id"]), [])) for f in filas]
 
-    def listar_muestras_rechazadas_con_transporte(self) -> list[dict]:
+    def listar_muestras_rechazadas_con_transporte(
+        self, clinica_id: int | None = None
+    ) -> list[dict]:
         """
         Recupera información completa de trazabilidad de todas las muestras rechazadas
         para el reporte de auditoría y transporte sanitario (Reporte 2 del TP).
         """
-        sql = """
+        condicion_clinica = "AND rb.clinica_origen_id = ?" if clinica_id is not None else ""
+        parametros = (clinica_id,) if clinica_id is not None else ()
+        sql = f"""
             SELECT mb.id AS muestra_id,
                    mb.codigo_muestra,
                    ctm.nombre AS tipo_muestra,
@@ -302,6 +306,7 @@ class MuestraDAO(DAOBase):
                    rb.numero_remito,
                    cl.nombre AS clinica_origen,
                    lb.nombre AS laboratorio_destino,
+                   cs.codigo AS conservadora_codigo,
                    ps.numero_serie AS precinto_serie,
                    ps.estado AS precinto_estado,
                    tr.nombre AS transportista_nombre,
@@ -313,13 +318,14 @@ class MuestraDAO(DAOBase):
             LEFT JOIN remitos_biologicos rb ON mb.remito_id = rb.id
             LEFT JOIN clinicas cl ON rb.clinica_origen_id = cl.id
             LEFT JOIN laboratorios lb ON rb.laboratorio_destino_id = lb.id
+            LEFT JOIN conservadoras cs ON rb.conservadora_id = cs.id
             LEFT JOIN precintos_sanitarios ps ON rb.precinto_id = ps.id
             LEFT JOIN envios_laboratorio el ON rb.id = el.remito_id
             LEFT JOIN transportistas tr ON el.transportista_id = tr.id
-            WHERE mb.estado_actual = 'Rechazada'
+            WHERE mb.estado_actual = 'Rechazada' {condicion_clinica}
             ORDER BY mb.id DESC
         """
-        filas = self.conexion.consultar_todos(sql)
+        filas = self.conexion.consultar_todos(sql, parametros)
         return [dict(f) for f in filas]
 
     @staticmethod

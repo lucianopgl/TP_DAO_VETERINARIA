@@ -1,34 +1,41 @@
 """
-Pruebas Unitarias e Integración: Mejoras de Auditoría (Fase 3 - Refinamiento)
-=============================================================================
+Pruebas Unitarias e Integración: Trazabilidad Logística e Historia Clínica
+==========================================================================
 
-Verifica las 4 mejoras acordadas durante la auditoría:
-    1. Ciclo de vida explícito del RemitoBiologico (despachar, recibir con control de precinto).
-    2. Consulta y actualización de Historia Clínica (antecedentes y alergias) en MascotaDAO.
-    3. Cálculo inteligente de vacunas obligatorias pendientes / vencidas en MascotaDAO.
-    4. Consulta de auditoría de muestras rechazadas con trazabilidad de transporte en MuestraDAO.
+Verifica:
+    1. Ciclo de vida explícito de `RemitoBiologico` (precintar, despachar, recibir
+       con control de precinto e historial de estados inmutable).
+    2. Consulta y actualización de `HistoriaClinica` (antecedentes y alergias) en `MascotaDAO`.
+    3. Cálculo experto de vacunas obligatorias pendientes o vencidas (`HistoriaClinica` + `MascotaDAO`).
+    4. Consulta de auditoría de muestras rechazadas con trazabilidad de transporte
+       (incluyendo conservadora isotérmica, precinto y transportista) en `MuestraDAO`.
+    5. Consistencia POO entre el historial en memoria de `MuestraBiologica` y su persistencia.
 """
 
 import unittest
-from datetime import datetime
+
 from src.dominio.cliente import Cliente
-from src.dominio.mascota import Mascota
-from src.dominio.historia_clinica import VacunaAplicada
-from src.dominio.logistica import ConservadoraIsotermica, EnvioLaboratorio, PrecintoSanitario, RemitoBiologico
-from src.dominio.muestra_biologica import MuestraBiologica
 from src.dominio.consulta_medica import ConsultaMedica, OrdenDerivacion
-from src.dominio.excepciones import ErrorValidacionNegocio
-from src.persistencia.conexion_bd import RUTA_BD_EN_MEMORIA, ConexionBD
-from src.persistencia.inicializador_bd import inicializar_base_datos
+from src.dominio.excepciones import (
+    ErrorDatosInvalidos,
+    ErrorValidacionNegocio,
+    ErrorVeterinaria,
+)
+from src.dominio.historia_clinica import VacunaAplicada
+from src.dominio.logistica import EnvioLaboratorio, PrecintoSanitario, RemitoBiologico
+from src.dominio.mascota import Mascota
+from src.dominio.muestra_biologica import MuestraBiologica
 from src.persistencia.cliente_dao import ClienteDAO
-from src.persistencia.mascota_dao import MascotaDAO
+from src.persistencia.conexion_bd import RUTA_BD_EN_MEMORIA, ConexionBD
 from src.persistencia.consulta_dao import ConsultaDAO
-from src.persistencia.muestra_dao import MuestraDAO
+from src.persistencia.inicializador_bd import inicializar_base_datos
 from src.persistencia.logistica_dao import LogisticaDAO
+from src.persistencia.mascota_dao import MascotaDAO
+from src.persistencia.muestra_dao import MuestraDAO
 
 
-class PruebaMejorasAuditoria(unittest.TestCase):
-    """Batería de pruebas para las funcionalidades incorporadas en la auditoría."""
+class PruebaTrazabilidadEHistoriaClinica(unittest.TestCase):
+    """Batería de pruebas de trazabilidad de remitos/muestras y evolución de historia clínica."""
 
     def setUp(self) -> None:
         ConexionBD.reiniciar_instancia()
@@ -43,7 +50,7 @@ class PruebaMejorasAuditoria(unittest.TestCase):
         ConexionBD.reiniciar_instancia()
 
     # ----------------------------------------------------------------------------------
-    # 1. Ciclo de Vida de RemitoBiologico
+    # 1. Ciclo de Vida de RemitoBiologico e Historial de Estados
     # ----------------------------------------------------------------------------------
 
     def test_ciclo_de_vida_remito_exitoso_y_transiciones_invalidas(self):
@@ -80,9 +87,13 @@ class PruebaMejorasAuditoria(unittest.TestCase):
         muestra = MuestraBiologica(1, "M-01", 1, 1, "2026-10-19 10:00:00")
         precinto = PrecintoSanitario(1, "PREC-002", "Intacto")
         remito = RemitoBiologico(
-            id=2, numero_remito="REM-200", clinica_origen_id=1,
-            laboratorio_destino_id=1, conservadora_id=1,
-            fecha_hora_creacion="2026-10-19 10:00:00", muestras=[muestra]
+            id=2,
+            numero_remito="REM-200",
+            clinica_origen_id=1,
+            laboratorio_destino_id=1,
+            conservadora_id=1,
+            fecha_hora_creacion="2026-10-19 10:00:00",
+            muestras=[muestra],
         )
         remito.precintar(precinto)
         remito.despachar()
@@ -90,6 +101,24 @@ class PruebaMejorasAuditoria(unittest.TestCase):
         # Al recibir con precinto roto
         remito.recibir("Roto")
         self.assertEqual(remito.estado, "Rechazado")
+
+    def test_historial_estados_remito_persistido_y_recuperado(self):
+        pid = self.logistica_dao.crear_precinto("PREC-HIST-01", estado="Intacto")
+        rid = self.logistica_dao.crear_remito(
+            RemitoBiologico(None, "REM-HIST-01", 1, 1, 1, "2026-10-19 10:00:00")
+        )
+        self.logistica_dao.actualizar_estado_remito(
+            rid, "EnPreparacion", "Precintado", "2026-10-19 10:15:00", precinto_id=pid
+        )
+        self.logistica_dao.actualizar_estado_remito(
+            rid, "Precintado", "EnTransito", "2026-10-19 10:30:00"
+        )
+        historial = self.logistica_dao.obtener_historial_remito(rid)
+        self.assertEqual(len(historial), 3)
+        self.assertEqual(
+            [h["estado_nuevo"] for h in historial],
+            ["EnPreparacion", "Precintado", "EnTransito"],
+        )
 
     # ----------------------------------------------------------------------------------
     # 2. Historia Clínica en MascotaDAO
@@ -135,7 +164,9 @@ class PruebaMejorasAuditoria(unittest.TestCase):
             VacunaAplicada(None, mid, 2, fecha_aplicacion="2024-05-10")
         )
 
-        pendientes_despues = self.mascota_dao.obtener_vacunas_pendientes(mid, fecha_referencia="2026-10-19")
+        pendientes_despues = self.mascota_dao.obtener_vacunas_pendientes(
+            mid, fecha_referencia="2026-10-19"
+        )
         # Antirrábica está al día -> sólo Séxtuple debe figurar como pendiente (vencida)
         self.assertEqual(len(pendientes_despues), 1)
         self.assertEqual(pendientes_despues[0]["nombre_vacuna"], "Séxtuple canina")
@@ -146,7 +177,6 @@ class PruebaMejorasAuditoria(unittest.TestCase):
     # ----------------------------------------------------------------------------------
 
     def test_consulta_de_muestras_rechazadas_con_transporte(self):
-        # Armar circuito
         cid = self.cliente_dao.crear(Cliente(None, "30111222", "Juan", "Pérez", "3511111111"))
         mid = self.mascota_dao.crear(Mascota(None, "Bobby", 1, 3, "Macho", cid))
         cons_id = self.consulta_dao.crear(
@@ -163,7 +193,14 @@ class PruebaMejorasAuditoria(unittest.TestCase):
             RemitoBiologico(None, "REM-RECH-01", 1, 1, 1, "2026-10-19 10:30:00", precinto_id=pid)
         )
         self.logistica_dao.crear_envio(
-            EnvioLaboratorio(None, rid, 1, "2026-10-19 11:00:00", "2026-10-19 12:30:00", "Precinto roto al arribo")
+            EnvioLaboratorio(
+                None,
+                rid,
+                1,
+                "2026-10-19 11:00:00",
+                "2026-10-19 12:30:00",
+                "Precinto roto al arribo",
+            )
         )
 
         # Transición de la muestra a Rechazada
@@ -184,6 +221,7 @@ class PruebaMejorasAuditoria(unittest.TestCase):
         self.assertEqual(item["numero_remito"], "REM-RECH-01")
         self.assertEqual(item["precinto_serie"], "PREC-ROTO-01")
         self.assertEqual(item["precinto_estado"], "Roto")
+        self.assertIsNotNone(item["conservadora_codigo"])
         self.assertIsNotNone(item["transportista_nombre"])
         self.assertIn("Clínica Veterinaria Centro", item["clinica_origen"])
 
@@ -192,8 +230,6 @@ class PruebaMejorasAuditoria(unittest.TestCase):
     # ----------------------------------------------------------------------------------
 
     def test_actualizar_sin_id_lanza_error_veterinaria_y_consistencia_historial_muestra(self):
-        from src.dominio.excepciones import ErrorDatosInvalidos, ErrorVeterinaria
-
         cliente_sin_id = Cliente(None, "30111222", "Juan", "Pérez", "3511111111")
         with self.assertRaises(ErrorDatosInvalidos) as ctx_cli:
             self.cliente_dao.actualizar(cliente_sin_id)

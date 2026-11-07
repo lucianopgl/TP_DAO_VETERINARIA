@@ -34,6 +34,16 @@ class RegistroTrazabilidad:
     fecha_hora: str
     observacion: str | None = None
 
+    def __post_init__(self) -> None:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida la integridad de los campos obligatorios del hito de trazabilidad."""
+        if not self.estado_nuevo or not str(self.estado_nuevo).strip():
+            raise ErrorDatosInvalidos("estado_nuevo", "El estado nuevo de trazabilidad es obligatorio.")
+        if not self.fecha_hora or not str(self.fecha_hora).strip():
+            raise ErrorDatosInvalidos("fecha_hora", "La fecha y hora de trazabilidad es obligatoria.")
+
 
 class MuestraBiologica:
     """

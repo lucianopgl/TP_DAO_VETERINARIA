@@ -236,3 +236,24 @@ class EnvioLaboratorio:
     fecha_hora_despacho: str
     fecha_hora_recepcion: str | None = None
     observaciones_recepcion: str | None = None
+
+    def __post_init__(self) -> None:
+        self.validar()
+
+    def validar(self) -> None:
+        """Valida los datos obligatorios y la coherencia temporal del envío."""
+        if not self.remito_id or int(self.remito_id) <= 0:
+            raise ErrorDatosInvalidos("remito_id", "El remito asociado al envío es obligatorio.")
+        if not self.transportista_id or int(self.transportista_id) <= 0:
+            raise ErrorDatosInvalidos("transportista_id", "El transportista asignado es obligatorio.")
+        if not self.fecha_hora_despacho or not str(self.fecha_hora_despacho).strip():
+            raise ErrorDatosInvalidos("fecha_hora_despacho", "La fecha y hora de despacho es obligatoria.")
+        self.fecha_hora_despacho = str(self.fecha_hora_despacho).strip()
+
+        if self.fecha_hora_recepcion:
+            self.fecha_hora_recepcion = str(self.fecha_hora_recepcion).strip()
+            if self.fecha_hora_recepcion < self.fecha_hora_despacho:
+                raise ErrorDatosInvalidos(
+                    "fecha_hora_recepcion",
+                    "La fecha y hora de recepción no puede ser anterior a la de despacho.",
+                )

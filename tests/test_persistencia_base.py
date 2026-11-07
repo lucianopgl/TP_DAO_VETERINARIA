@@ -1,5 +1,6 @@
 """
-Pruebas de la infraestructura de persistencia (Fase 3 - Paso 1).
+Pruebas de Infraestructura de Persistencia, Singleton y Transacciones Atómicas
+==============================================================================
 
 Verifican:
     - El patrón Singleton de ConexionBD.

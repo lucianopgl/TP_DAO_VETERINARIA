@@ -50,6 +50,8 @@ classDiagram
         +str|None alergias
         +list~VacunaAplicada~ vacunas
         +list~Tratamiento~ tratamientos
+        +validar() void
+        +calcular_vacunas_pendientes(catalogo_obligatorias: list, fecha_ref: str|None) list~dict~
     }
 
     class VacunaAplicada {
@@ -60,6 +62,7 @@ classDiagram
         +str nombre_vacuna
         +bool es_obligatoria
         +int|None consulta_id
+        +validar() void
     }
 
     class Tratamiento {
@@ -69,6 +72,7 @@ classDiagram
         +str|None medicamento
         +str|None dosis
         +int|None duracion_dias
+        +validar() void
     }
 
     Cliente "1" o-- "1..*" Mascota : es responsable de >
@@ -95,6 +99,7 @@ classDiagram
         +inicio_dt() datetime
         +fin_dt() datetime
         +fecha_hora_fin() str
+        +validar_rango_horario(inicio_iso: str, duracion_min: int)$ tuple~datetime, datetime~
         +se_superpone_con(inicio_iso: str, duracion_min: int) bool
     }
 
@@ -108,6 +113,7 @@ classDiagram
         +str nombre_estudio
         +float costo_base
         +list~MuestraBiologica~ muestras
+        +validar() void
     }
 
     Mascota "1" --> "0..*" ConsultaMedica : recibe >
@@ -130,6 +136,7 @@ classDiagram
         +ResultadoAnalisis|None resultado
         -list~RegistroTrazabilidad~ _historial
         -EstadoMuestra _estado
+        +validar() void
         +estado() EstadoMuestra
         +estado_actual() str
         +historial() tuple~RegistroTrazabilidad~
@@ -149,6 +156,7 @@ classDiagram
         +str estado_nuevo
         +str fecha_hora
         +str|None observacion
+        +validar() void
     }
 
     class EstadoMuestra {
@@ -209,6 +217,7 @@ classDiagram
         +float|None temperatura_max
         +bool disponible
         -list~MuestraBiologica~ _muestras
+        +validar() void
         +cantidad_muestras() int
         +espacio_disponible() int
         +agregar_muestra(muestra: MuestraBiologica) void
@@ -238,6 +247,8 @@ classDiagram
         +int|None id
         +str numero_serie
         +str estado
+        +normalizar_estado(estado: str)$ str
+        +validar() void
         +validar_estado() void
         +esta_intacto() bool
     }
@@ -254,6 +265,7 @@ classDiagram
         +ConservadoraIsotermica|None conservadora
         +PrecintoSanitario|None precinto
         +list~MuestraBiologica~ muestras
+        +validar() void
         +validar_estado() void
         +precintar(precinto: PrecintoSanitario) void
         +despachar() void
@@ -267,6 +279,7 @@ classDiagram
         +str fecha_hora_despacho
         +str|None fecha_hora_recepcion
         +str|None observaciones_recepcion
+        +validar() void
     }
 
     ConservadoraIsotermica "1" o-- "0..*" MuestraBiologica : aloja >
@@ -289,6 +302,7 @@ classDiagram
         +float costo_analisis
         +str fecha_hora_analisis
         +str bioquimico_nombre
+        +validar() void
     }
 
     class ComprobanteAtencion {
@@ -299,6 +313,7 @@ classDiagram
         +float monto_total
         +str fecha_hora_emision
         +list~DetalleComprobante~ detalles
+        +validar() void
     }
 
     class DetalleComprobante {
@@ -307,6 +322,7 @@ classDiagram
         +str tipo_concepto
         +str concepto
         +float monto
+        +validar() void
     }
 
     class EstrategiaFacturacion {
@@ -347,6 +363,27 @@ classDiagram
         +float monto
     }
 
+    %% =====================================================================
+    %% SUBDOMINIO 6: NOTIFICACIONES DESACOPLADAS (PATRÓN OBSERVER)
+    %% =====================================================================
+    class Observador {
+        <<abstract>>
+        +actualizar(evento: str, datos: dict)* void
+    }
+
+    class SujetoEventos {
+        -list~Observador~ _observadores
+        +suscribir(observador: Observador) void
+        +desuscribir(observador: Observador) void
+        +notificar(evento: str, **datos) void
+    }
+
+    class ObservadorAuditoria {
+        +list~dict~ registro_eventos
+        +actualizar(evento: str, datos: dict) void
+        +limpiar() void
+    }
+
     MuestraBiologica "1" --> "0..1" ResultadoAnalisis : produce >
     ConsultaMedica "1" --> "0..1" ComprobanteAtencion : genera >
     ComprobanteAtencion "1" *-- "1..*" DetalleComprobante : contiene >
@@ -356,6 +393,8 @@ classDiagram
     EstrategiaFacturacion <|-- TarifaEstandar
     EstrategiaFacturacion <|-- TarifaUrgenciaLaboratorio
     EstrategiaFacturacion <|-- TarifaConvenioRed
+    SujetoEventos "1" o-- "0..*" Observador : notifica a >
+    Observador <|-- ObservadorAuditoria
 ```
 
 ---
@@ -404,7 +443,7 @@ classDiagram
     }
 
     class MascotaDAO {
-        +crear(mascota: Mascota, fecha_apertura: str|None) int
+        +crear(mascota: Mascota, fecha_apertura: str|None, ant: str|None, alerg: str|None) int
         +actualizar(mascota: Mascota) void
         +eliminar(mascota_id: int) void
         +obtener_por_id(mascota_id: int) Mascota|None
@@ -416,6 +455,8 @@ classDiagram
         +obtener_vacunas_pendientes(mascota_id: int, fecha_ref: str|None) list~dict~
         +obtener_historia_clinica(mascota_id: int) HistoriaClinica|None
         +actualizar_historia_clinica(mascota_id: int, antecedentes: str, alergias: str) void
+        +listar_especies() list~dict~
+        +listar_catalogo_vacunas(especie_id: int|None) list~dict~
         -_mapear_fila(fila: Row)$ Mascota
     }
 
@@ -425,10 +466,15 @@ classDiagram
         +obtener_por_id(consulta_id: int) ConsultaMedica|None
         +listar_por_veterinario_y_fecha(veterinario_id: int, fecha_str: str) list~ConsultaMedica~
         +listar_por_mascota(mascota_id: int) list~ConsultaMedica~
+        +listar_todas() list~ConsultaMedica~
         +obtener_tratamientos_por_consulta(consulta_id: int) list~Tratamiento~
+        +listar_tratamientos_por_mascota(mascota_id: int) list~Tratamiento~
         +crear_orden_derivacion(orden: OrdenDerivacion) int
         +obtener_orden_por_id(orden_id: int) OrdenDerivacion|None
         +listar_ordenes_por_consulta(consulta_id: int) list~OrdenDerivacion~
+        +listar_clinicas() list~dict~
+        +listar_veterinarios() list~dict~
+        +listar_tipos_estudio() list~dict~
         -_mapear_fila(fila: Row)$ ConsultaMedica
     }
 
@@ -440,8 +486,11 @@ classDiagram
         +listar_por_orden(orden_id: int) list~MuestraBiologica~
         +listar_por_remito(remito_id: int) list~MuestraBiologica~
         +listar_por_estado(estado: str) list~MuestraBiologica~
+        +listar_extraidas_por_clinica(clinica_id: int) list~MuestraBiologica~
+        +obtener_clinica_origen(muestra_id: int) int|None
+        +listar_tipos_muestra() list~dict~
         +obtener_historial(muestra_id: int) list~RegistroTrazabilidad~
-        +listar_muestras_rechazadas_con_transporte() list~dict~
+        +listar_muestras_rechazadas_con_transporte(clinica_id: int|None) list~dict~
         -_mapear_fila(fila: Row, historial: list)$ MuestraBiologica
     }
 
@@ -458,14 +507,21 @@ classDiagram
         +obtener_remito_por_id(remito_id: int) RemitoBiologico|None
         +obtener_remito_por_numero(numero_remito: str) RemitoBiologico|None
         +listar_remitos_por_estado(estado: str) list~RemitoBiologico~
+        +listar_todos_los_remitos() list~RemitoBiologico~
+        +obtener_historial_remito(remito_id: int) list~dict~
         +crear_envio(envio: EnvioLaboratorio) int
         +registrar_recepcion_envio(remito_id: int, fecha_recepcion: str, obs: str) void
         +obtener_envio_por_remito(remito_id: int) EnvioLaboratorio|None
+        +listar_laboratorios() list~dict~
+        +listar_transportistas() list~dict~
     }
 
     class FacturacionDAO {
         +crear_resultado(resultado: ResultadoAnalisis) int
         +obtener_resultado_por_muestra(muestra_id: int) ResultadoAnalisis|None
+        +listar_costos_estudios_completados_por_consulta(consulta_id: int) list~tuple~
+        +listar_profesionales_laboratorio() list~dict~
+        +obtener_profesional_laboratorio_por_id(profesional_id: int) dict|None
         +crear_comprobante(comprobante: ComprobanteAtencion) int
         +obtener_comprobante_por_consulta(consulta_id: int) ComprobanteAtencion|None
         +obtener_comprobante_por_id(comprobante_id: int) ComprobanteAtencion|None
@@ -480,6 +536,102 @@ classDiagram
     DAOBase <|-- MuestraDAO
     DAOBase <|-- LogisticaDAO
     DAOBase <|-- FacturacionDAO
+```
+
+---
+
+## 2.B. Diagrama de Clases UML — Capas de Servicios e Interfaz Gráfica
+
+```mermaid
+classDiagram
+    direction TB
+
+    class ServicioClinica {
+        +ConexionBD conexion
+        +ClienteDAO cliente_dao
+        +MascotaDAO mascota_dao
+        +ConsultaDAO consulta_dao
+        +MuestraDAO muestra_dao
+        +registrar_cliente(...) Cliente
+        +actualizar_cliente(cliente: Cliente) Cliente
+        +registrar_mascota(...) Mascota
+        +actualizar_mascota(mascota: Mascota) Mascota
+        +obtener_historia_clinica_completa(mascota_id: int) HistoriaClinica
+        +aplicar_vacuna(...) VacunaAplicada
+        +verificar_esquema_vacunacion(mascota_id: int, fecha_ref: str|None) list~dict~
+        +registrar_consulta_medica(...) tuple~ConsultaMedica, list~
+        +emitir_orden_derivacion(...) OrdenDerivacion
+        +extraer_muestra_biologica(...) MuestraBiologica
+    }
+
+    class ServicioLogistica {
+        +ConexionBD conexion
+        +LogisticaDAO logistica_dao
+        +MuestraDAO muestra_dao
+        +SujetoEventos eventos
+        +empaquetar_muestras(...) RemitoBiologico
+        +despachar_remito(...) EnvioLaboratorio
+        +recibir_remito_en_laboratorio(...) RemitoBiologico
+        +recorrer_muestras_conservadora(remito_id: int, solo_viables: bool) list~MuestraBiologica~
+    }
+
+    class ServicioLaboratorio {
+        +ConexionBD conexion
+        +MuestraDAO muestra_dao
+        +ConsultaDAO consulta_dao
+        +FacturacionDAO facturacion_dao
+        +SujetoEventos eventos
+        +registrar_resultado_analisis(...) ResultadoAnalisis
+        +previsualizar_liquidacion(consulta_id: int, estrategia: EstrategiaFacturacion|str) LiquidacionFactura
+        +emitir_comprobante_atencion(...) ComprobanteAtencion
+    }
+
+    class ServicioReportes {
+        +ConexionBD conexion
+        +validar_fecha_iso(fecha: str|None, nombre_campo: str)$ str|None
+        +validar_rango_fechas(fecha_desde: str|None, fecha_hasta: str|None)$ tuple
+        +reporte_atenciones_y_derivaciones(...) dict
+        +reporte_muestras_rechazadas_transporte(...) dict
+        +reporte_tratamientos_y_vacunas_pendientes(...) dict
+        +reporte_facturacion_desglosada(...) dict
+        +reporte_tiempos_transito_y_procesamiento(...) dict
+        +exportar_a_csv(filas: Sequence~dict~, ruta_archivo: str|Path)$ Path
+        +exportar_paquete_completo_csv(directorio_destino: str|Path, ...) dict~str, Path~
+    }
+
+    class VentanaPrincipal {
+        -ServicioClinica _srv_clinica
+        -ServicioLogistica _srv_logistica
+        -ServicioLaboratorio _srv_laboratorio
+        -ServicioReportes _srv_reportes
+        -SujetoEventos _sujeto_eventos
+        -dict _vistas
+        +mostrar_vista(clave: str) void
+        +actualizar(evento: str, datos: dict) void
+    }
+
+    class VistaClientes
+    class VistaMascotas
+    class VistaConsultas
+    class VistaLogistica
+    class VistaLaboratorio
+    class VistaReportes
+
+    VentanaPrincipal *-- VistaClientes
+    VentanaPrincipal *-- VistaMascotas
+    VentanaPrincipal *-- VistaConsultas
+    VentanaPrincipal *-- VistaLogistica
+    VentanaPrincipal *-- VistaLaboratorio
+    VentanaPrincipal *-- VistaReportes
+    VistaClientes --> ServicioClinica
+    VistaMascotas --> ServicioClinica
+    VistaConsultas --> ServicioClinica
+    VistaLogistica --> ServicioLogistica
+    VistaLogistica --> ServicioClinica
+    VistaLaboratorio --> ServicioLaboratorio
+    VistaLaboratorio --> ServicioClinica
+    VistaReportes --> ServicioReportes
+    VistaReportes --> ServicioClinica
 ```
 
 ---
