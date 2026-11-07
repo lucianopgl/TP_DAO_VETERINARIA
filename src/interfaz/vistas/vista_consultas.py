@@ -96,7 +96,7 @@ class VistaConsultas(ctk.CTkFrame):
 
     def _construir_panel_formulario_consulta(self) -> None:
         """Crea el formulario izquierdo para agendar y registrar consultas médicas y tratamientos."""
-        panel = ctk.CTkFrame(self, corner_radius=10)
+        panel = ctk.CTkScrollableFrame(self, corner_radius=10)
         panel.grid(row=1, column=0, sticky="nsew", padx=(10, 6), pady=4)
         panel.grid_columnconfigure(0, weight=1)
 

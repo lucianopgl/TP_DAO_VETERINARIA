@@ -80,7 +80,7 @@ class VistaClientes(ctk.CTkFrame):
 
     def _construir_panel_formulario(self) -> None:
         """Crea el formulario de entrada de datos del cliente con validaciones visuales."""
-        panel = ctk.CTkFrame(self, corner_radius=10)
+        panel = ctk.CTkScrollableFrame(self, corner_radius=10)
         panel.grid(row=1, column=0, sticky="nsew", padx=(10, 6), pady=4)
         panel.grid_columnconfigure(0, weight=1)
 
@@ -186,21 +186,13 @@ class VistaClientes(ctk.CTkFrame):
 
         ctk.CTkButton(
             barra_busqueda,
-            text="Buscar",
+            text="Limpiar",
             width=90,
-            height=34,
-            command=self._al_buscar,
-        ).grid(row=0, column=1, padx=(0, 6))
-
-        ctk.CTkButton(
-            barra_busqueda,
-            text="Ver Todos",
-            width=95,
             height=34,
             fg_color="#475569",
             hover_color="#334155",
             command=self._al_restablecer_busqueda,
-        ).grid(row=0, column=2)
+        ).grid(row=0, column=1)
 
         # Tabla reutilizable
         columnas = [

@@ -238,6 +238,13 @@ class PruebaInterfazEtapa3(unittest.TestCase):
             vista_lab._al_seleccionar_muestra_recibida("1")
             self.assertEqual(vista_lab._muestra_seleccionada_id, 1)
 
+            # 2.5. Verificar que la tabla de muestras extraídas pendientes visualiza el estado 'Extraida'
+            vista_log._recargar_muestras_extraidas_pendientes()
+            vista_log._tabla_muestras_extraidas.cargar_filas.assert_called()
+            filas_extraidas = vista_log._tabla_muestras_extraidas.cargar_filas.call_args[0][0]
+            self.assertEqual(len(filas_extraidas), 1)
+            self.assertEqual(filas_extraidas[0][1][4], "Extraida")
+
             # 3. Empaquetar la muestra #1 y verificar recorrido con Patrón Iterator en VistaLogistica
             remito = srv_logistica.empaquetar_muestras(
                 numero_remito="REM-TEST-01",

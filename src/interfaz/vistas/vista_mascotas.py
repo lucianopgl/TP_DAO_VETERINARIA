@@ -23,9 +23,10 @@ from typing import Any
 
 import customtkinter as ctk
 
-from src.dominio.excepciones import ErrorDatosInvalidos
+from src.dominio.excepciones import ErrorDatosInvalidos, ErrorMascotaSinResponsable
 from src.dominio.mascota import Mascota
 from src.interfaz.componentes.alertas import (
+    COLOR_BORDE_NORMAL,
     confirmar_accion,
     ejecutar_accion_segura,
     limpiar_resaltado_campos,
@@ -89,7 +90,7 @@ class VistaMascotas(ctk.CTkFrame):
 
     def _construir_panel_formulario(self) -> None:
         """Construye el formulario izquierdo para alta, edición y baja de mascotas."""
-        panel = ctk.CTkFrame(self, corner_radius=10)
+        panel = ctk.CTkScrollableFrame(self, corner_radius=10)
         panel.grid(row=1, column=0, sticky="nsew", padx=(10, 6), pady=4)
         panel.grid_columnconfigure(0, weight=1)
 
@@ -112,6 +113,7 @@ class VistaMascotas(ctk.CTkFrame):
             values=[OPCION_SIN_RESPONSABLE],
             height=31,
             state="readonly",
+            command=self._al_cambiar_cliente_combo,
         )
         self._combo_cliente.set(OPCION_SIN_RESPONSABLE)
         self._combo_cliente.grid(row=2, column=0, sticky="ew", padx=14, pady=(0, 3))
@@ -391,48 +393,90 @@ class VistaMascotas(ctk.CTkFrame):
         self._tabla_vacunas.grid(row=1, column=0, sticky="nsew", padx=4, pady=(0, 4))
 
         # --- Tab 2: Antecedentes, Alergias y Tratamientos ---
-        tab_antecedentes.grid_rowconfigure(1, weight=1)
-        tab_antecedentes.grid_columnconfigure((0, 1), weight=1)
+        tab_antecedentes.grid_rowconfigure(2, weight=1)
+        tab_antecedentes.grid_columnconfigure(0, weight=1)
 
-        barra_ant = ctk.CTkFrame(tab_antecedentes, fg_color="transparent")
-        barra_ant.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(2, 6))
-        barra_ant.grid_columnconfigure((1, 3), weight=1)
+        # Sección 1: Ficha Médica Permanente (Antecedentes y Alergias de la Historia 1:1)
+        marco_ficha = ctk.CTkFrame(tab_antecedentes, fg_color="transparent")
+        marco_ficha.grid(row=0, column=0, sticky="ew", padx=4, pady=(2, 4))
+        marco_ficha.grid_columnconfigure((1, 3), weight=1)
 
-        ctk.CTkLabel(barra_ant, text="Antecedentes:", font=ctk.CTkFont(size=12, weight="bold")).grid(
-            row=0, column=0, padx=(0, 4)
+        ctk.CTkLabel(
+            marco_ficha,
+            text="Ficha Médica Permanente (Historia 1:1):",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            text_color=("gray20", "gray85"),
+        ).grid(row=0, column=0, columnspan=5, sticky="w", pady=(0, 4))
+
+        ctk.CTkLabel(
+            marco_ficha,
+            text="Antecedentes:",
+            font=ctk.CTkFont(size=11, weight="bold"),
+        ).grid(row=1, column=0, sticky="w", padx=(0, 6))
+
+        self._entrada_hc_antecedentes = ctk.CTkEntry(
+            marco_ficha, placeholder_text="Ej: Cirugías previas, patologías crónicas...", height=30
         )
-        self._entrada_hc_antecedentes = ctk.CTkEntry(barra_ant, height=30)
-        self._entrada_hc_antecedentes.grid(row=0, column=1, sticky="ew", padx=(0, 10))
+        self._entrada_hc_antecedentes.grid(row=1, column=1, sticky="ew", padx=(0, 10))
 
-        ctk.CTkLabel(barra_ant, text="Alergias:", font=ctk.CTkFont(size=12, weight="bold")).grid(
-            row=0, column=2, padx=(0, 4)
+        ctk.CTkLabel(
+            marco_ficha,
+            text="Alergias:",
+            font=ctk.CTkFont(size=11, weight="bold"),
+        ).grid(row=1, column=2, sticky="w", padx=(0, 6))
+
+        self._entrada_hc_alergias = ctk.CTkEntry(
+            marco_ficha, placeholder_text="Ej: Penicilina, alimentos...", height=30
         )
-        self._entrada_hc_alergias = ctk.CTkEntry(barra_ant, height=30)
-        self._entrada_hc_alergias.grid(row=0, column=3, sticky="ew", padx=(0, 10))
+        self._entrada_hc_alergias.grid(row=1, column=3, sticky="ew", padx=(0, 10))
 
         ctk.CTkButton(
-            barra_ant,
+            marco_ficha,
             text="Guardar Cambios H.C.",
+            fg_color="#1D4ED8",
+            hover_color="#1E40AF",
+            font=ctk.CTkFont(size=11, weight="bold"),
             height=30,
             command=self._al_actualizar_historia_clinica,
-        ).grid(row=0, column=4)
+        ).grid(row=1, column=4)
+
+        # Sección 2: Historial de Tratamientos Prescriptos en Consultas Médicas
+        marco_header_trat = ctk.CTkFrame(tab_antecedentes, fg_color="transparent")
+        marco_header_trat.grid(row=1, column=0, sticky="ew", padx=4, pady=(6, 2))
+        marco_header_trat.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            marco_header_trat,
+            text="Historial de Tratamientos Prescriptos (se originan en Consultas Médicas - Proceso 3):",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            text_color=("gray30", "gray75"),
+            anchor="w",
+        ).grid(row=0, column=0, sticky="w")
 
         columnas_trat = [
             ("id", "ID", 45),
-            ("consulta_id", "Consulta #", 85),
-            ("medicamento", "Medicamento", 150),
-            ("dosis", "Posología / Dosis", 150),
+            ("consulta_id", "Consulta #", 90),
+            ("medicamento", "Medicamento Prescripto", 170),
+            ("dosis", "Posología / Dosis", 160),
             ("duracion", "Duración", 90),
-            ("descripcion", "Indicación Terapéutica", 240),
+            ("descripcion", "Indicación Terapéutica", 250),
         ]
         self._tabla_tratamientos_hc = TablaDatos(
             tab_antecedentes, columnas=columnas_trat, altura_filas=4
         )
-        self._tabla_tratamientos_hc.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self._tabla_tratamientos_hc.grid(row=2, column=0, sticky="nsew", padx=4, pady=(0, 4))
 
     # ==================================================================================
     # Manejadores de Eventos
     # ==================================================================================
+
+    def _al_cambiar_cliente_combo(self, seleccion: str) -> None:
+        """Restaura el borde normal al seleccionar un cliente responsable válido."""
+        if seleccion != OPCION_SIN_RESPONSABLE:
+            try:
+                self._combo_cliente.configure(border_color=COLOR_BORDE_NORMAL)
+            except Exception:
+                pass
 
     def _obtener_edad_validada(self) -> int:
         """Convierte la edad ingresada a entero o lanza ErrorDatosInvalidos."""
@@ -460,6 +504,10 @@ class VistaMascotas(ctk.CTkFrame):
 
         if self._mascota_seleccionada_id is None:
             def _crear() -> Mascota:
+                if not cliente_id:
+                    raise ErrorMascotaSinResponsable()
+                if not nombre:
+                    raise ErrorDatosInvalidos("nombre", "El nombre de la mascota es obligatorio.")
                 edad = self._obtener_edad_validada()
                 return self._servicio.registrar_mascota(
                     nombre=nombre,
@@ -490,6 +538,10 @@ class VistaMascotas(ctk.CTkFrame):
             id_actual = self._mascota_seleccionada_id
 
             def _actualizar() -> Mascota:
+                if not cliente_id:
+                    raise ErrorMascotaSinResponsable()
+                if not nombre:
+                    raise ErrorDatosInvalidos("nombre", "El nombre de la mascota es obligatorio.")
                 edad = self._obtener_edad_validada()
                 mascota_mod = Mascota(
                     id=id_actual,

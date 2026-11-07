@@ -183,7 +183,7 @@ class VistaLogistica(ctk.CTkFrame):
         tab.grid_columnconfigure(1, weight=1)
 
         # Panel izquierdo del tab: Datos del Remito y Precinto
-        panel_izq = ctk.CTkFrame(tab, fg_color="transparent")
+        panel_izq = ctk.CTkScrollableFrame(tab, fg_color="transparent")
         panel_izq.grid(row=0, column=0, sticky="nsew", padx=(6, 10), pady=4)
         panel_izq.grid_columnconfigure(0, weight=1)
 
@@ -307,8 +307,9 @@ class VistaLogistica(ctk.CTkFrame):
         columnas_extraidas = [
             ("id", "ID", 45),
             ("codigo", "Código Muestra", 130),
-            ("tipo", "Tipo Muestra", 135),
+            ("tipo", "Tipo Muestra", 130),
             ("orden", "Orden #", 65),
+            ("estado", "Estado (State)", 110),
             ("fecha", "Fecha Extracción", 145),
             ("seleccionada", "Incluida en Remito", 130),
         ]
@@ -404,7 +405,7 @@ class VistaLogistica(ctk.CTkFrame):
         tab.grid_rowconfigure(0, weight=1)
         tab.grid_columnconfigure(0, weight=1)
 
-        marco_recepcion = ctk.CTkFrame(tab, corner_radius=10)
+        marco_recepcion = ctk.CTkScrollableFrame(tab, corner_radius=10)
         marco_recepcion.grid(row=0, column=0, sticky="nsew", padx=20, pady=10)
         marco_recepcion.grid_columnconfigure(0, weight=1)
 
@@ -920,6 +921,7 @@ class VistaLogistica(ctk.CTkFrame):
                         m.codigo_muestra,
                         m.nombre_tipo_muestra,
                         f"#{m.orden_id}",
+                        m.estado_actual,
                         m.fecha_hora_extraccion,
                         seleccionada_txt,
                     ),

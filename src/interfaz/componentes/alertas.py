@@ -107,5 +107,8 @@ def ejecutar_accion_segura(
         )
         return None
     except ErrorVeterinaria as error:
+        campo_error = getattr(error, "campo", None)
+        if campo_error:
+            resaltar_campo_invalido(mapa_campos, str(campo_error))
         mostrar_error(titulo_error, error.mensaje)
         return None

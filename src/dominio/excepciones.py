@@ -86,6 +86,7 @@ class ErrorMascotaSinResponsable(ErrorValidacionNegocio):
 
     def __init__(self) -> None:
         super().__init__("Toda mascota debe tener un responsable (cliente) asociado.")
+        self.campo = "cliente_id"
 
 
 class ErrorSuperposicionTurno(ErrorValidacionNegocio):
