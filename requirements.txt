@@ -1,5 +1,6 @@
 # Dependencias externas del proyecto.
-# sqlite3, tkinter y unittest vienen incluidos con Python (3.11 o superior).
+# sqlite3 y unittest vienen incluidos con Python.
+# tkinter debe estar instalado en la distribución de Python usada por el proyecto.
 #
 # Instalación:  python -m pip install -r requirements.txt
 customtkinter>=5.2

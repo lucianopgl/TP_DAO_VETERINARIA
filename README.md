@@ -66,6 +66,7 @@ proyecto_veterinaria/
 ├── GEMINI.md                                         # Reglas arquitectónicas, principios SOLID/GRASP y Clean Code
 ├── README.md                                         # Documentación general del repositorio
 ├── main.py                                           # Punto de entrada de la aplicación de escritorio
+├── cargar_datos_prueba.py                            # Set de datos de prueba cargado a través de los servicios
 ├── requirements.txt                                  # customtkinter>=5.2, pytest
 ├── veterinaria.db                                    # Base de datos SQLite 3.37+ STRICT local
 ├── docs/                                             # Documentación técnica oficial y diagramas
@@ -151,6 +152,7 @@ proyecto_veterinaria/
 
 ### 1. Requisitos Previos
 * **Python 3.11 o superior** (con soporte para SQLite 3.37+ con sintaxis `STRICT`).
+* **Tkinter**, requerido por CustomTkinter. En Debian/Ubuntu se instala con `sudo apt install python3-tk` para el Python del sistema.
 * **Git**.
 
 ### 2. Clonar el Repositorio y Configurar Entorno
@@ -171,6 +173,9 @@ proyecto_veterinaria/
   source .venv/bin/activate
   ```
 
+> **Linux (Debian/Ubuntu):** instala Tkinter antes de crear el entorno virtual con `sudo apt install python3-tk`.
+> **Importante:** Tkinter no se instala con `pip`. Si usas un Python distinto al del sistema (por ejemplo, Python 3.14 instalado aparte), asegúrate de instalar o compilar el soporte Tcl/Tk para esa misma versión y vuelve a crear el entorno virtual. Puedes comprobarlo con `python -m tkinter`.
+
 ### 3. Instalar Dependencias
 ```bash
 pip install -r requirements.txt
@@ -181,6 +186,22 @@ Crea las 26 tablas `STRICT`, los triggers de inmutabilidad y precarga los catál
 ```bash
 python -m src.persistencia.inicializador_bd
 ```
+
+#### 4.1. (Opcional) Cargar Datos de Prueba
+Puebla la base con un escenario realista (agosto a noviembre de 2026) que recorre los 7 procesos y alimenta los 5 reportes. Los datos se cargan a través de la capa de servicios, por lo que pasan por las mismas validaciones de negocio y patrones que usa la interfaz:
+```bash
+python cargar_datos_prueba.py --reiniciar
+```
+> `--reiniciar` respalda la base actual en `veterinaria.db.bak` y crea una nueva. Sin esa opción, el script no hace nada si la base ya tiene clientes, para no mezclar datos.
+
+| Entidad | Cantidad | Escenarios para probar |
+| :--- | :---: | :--- |
+| Clientes | 12 | Elena Suárez no tiene mascotas (baja permitida) y usa DNI y teléfono de 7 dígitos (valores límite). |
+| Mascotas | 18 | Las 5 especies, con antecedentes y alergias. 5 mascotas quedan con 8 vacunas obligatorias vencidas o nunca aplicadas (Reporte 3). |
+| Consultas | 30 | Las 3 clínicas, 19 tratamientos y turnos simultáneos de distintos veterinarios (no se superponen). Varias quedan sin facturar. |
+| Muestras | 28 | 16 `Analizada`, 4 `Rechazada`, 2 `Recibida` sin analizar, 2 `EnTransito`, 1 `Empaquetada` y 3 `Extraida` pendientes de empaquetar. |
+| Remitos | 12 | 8 `Recibido`, 2 `Rechazado` (precinto `Roto` y `Violado`, Reporte 2), 1 `EnTransito` y 1 `Precintado`. Queda libre sólo `CONS-001`. |
+| Comprobantes | 16 | Las 3 estrategias: `Tarifa Estándar`, `Tarifa Urgencia` y `Tarifa Convenio Red` (Reporte 4). |
 
 ### 5. Iniciar la Aplicación de Escritorio
 Lanza la interfaz gráfica interactiva con las 6 vistas operativas:

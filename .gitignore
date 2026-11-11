@@ -1,6 +1,7 @@
 # Base de datos local (se regenera con: python -m src.persistencia.inicializador_bd)
 *.db
 *.db-journal
+*.db.bak
 *.sqlite
 *.sqlite3
 
